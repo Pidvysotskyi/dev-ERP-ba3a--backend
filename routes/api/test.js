@@ -6,11 +6,23 @@ router.get("/", (req, res, next) => {
   const data = [
     {
       name: "Oleksandr",
-      phone: "+380961126851",
+      role: "backend",
     },
     {
-      name: "Svitlana",
-      phone: "+380967507311",
+      name: "Victoria",
+      role: "frontend",
+    },
+    {
+      name: "Dmitriy",
+      role: "database",
+    },
+    {
+      name: "Stanislav",
+      role: "admin",
+    },
+    {
+      name: "Viacheslav",
+      role: "project manager",
     },
   ];
   res.json(data);
