@@ -10,8 +10,8 @@ const app = require("./app");
 
 // const { DB_PORT } = process.env;
 
-app.listen(3001, () => {
-  console.log("Server is running");
+app.listen(10002, () => {
+  console.log("Server is running in port 10002");
 });
 
 // https.createServer(options, app).listen(3001, () => {
