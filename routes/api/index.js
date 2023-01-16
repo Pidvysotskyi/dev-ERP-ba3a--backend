@@ -1,9 +1,7 @@
-const clientsRouter = require("./clients");
-const projectsRouter = require("./projects");
-const testRouter = require("./test");
+const authRouter = require("./auth");
+const usersRouter = require("./users");
 
 module.exports = {
-  clientsRouter,
-  projectsRouter,
-  testRouter,
+  authRouter,
+  usersRouter,
 };
