@@ -1,9 +1,9 @@
 const { User } = require("../../models");
 
 const logout = async (req, res) => {
-  const { AUTHORIZATION_ID } = req.user;
+  const { A_AUTHORIZATION_ID } = req.user;
 
-  await User.resetToken(AUTHORIZATION_ID);
+  await User.resetToken(A_AUTHORIZATION_ID);
   res.status(204).json();
 };
 

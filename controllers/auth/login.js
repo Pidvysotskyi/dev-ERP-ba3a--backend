@@ -4,33 +4,29 @@ const { Unauthorized } = require("http-errors");
 const jwt = require("jsonwebtoken");
 
 const login = async (req, res, next) => {
-  const { login, password } = req.body;
-  const [users, _] = await User.getAll();
-
-  const user = users.find(user => user.LOGIN === login);
+  const { password } = req.body;
+  const user = req.user;
 
   if (!user) {
     throw new Unauthorized("wrong login");
   }
 
-  const checkPass = User.comparePassword(password, user.PASSWORD);
-
-  console.log(checkPass);
+  const checkPass = User.comparePassword(password, user.A_PASSWORD);
 
   if (!checkPass) {
     throw new Unauthorized("wrong password");
   }
 
   const payload = {
-    id: user.AUTHORIZATION_ID,
+    id: user.A_AUTHORIZATION_ID,
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
-  await User.setToken(user.AUTHORIZATION_ID, token);
+  await User.setToken(user.A_AUTHORIZATION_ID, token);
 
   res.json({
     token,
     user: {
-      login: user.LOGIN,
+      login: user.A_LOGIN,
     },
   });
 };

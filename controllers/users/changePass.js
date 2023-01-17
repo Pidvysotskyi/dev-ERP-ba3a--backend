@@ -7,10 +7,8 @@ const changePass = async (req, res, next) => {
 
   const [[user], _] = await User.getById(id);
 
-  req.body = {
-    login: user.LOGIN,
-    password,
-  };
+  req.user = user;
+
   next();
 };
 

@@ -5,7 +5,7 @@ const { newUserSchema, loginUserSchema } = require("../../schemas/");
 
 const router = express.Router();
 
-// router.post("/register", validation(newUserSchema), ctrlWrapper(ctrl.signup));
+router.post("/register", ctrlWrapper(ctrl.register));
 router.post("/login", validation(loginUserSchema), ctrlWrapper(ctrl.firstLogin), ctrlWrapper(ctrl.login));
 router.post("/logout", auth, ctrlWrapper(ctrl.logout));
 
