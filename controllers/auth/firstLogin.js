@@ -1,7 +1,7 @@
 const { User } = require("../../models");
 const { Unauthorized } = require("http-errors");
 
-const firstPassword = "12345678";
+const { FIRST_PASSWORD } = require("../../config");
 
 const firstLogin = async (req, res, next) => {
   const { login, password } = req.body;
@@ -13,7 +13,7 @@ const firstLogin = async (req, res, next) => {
     throw new Unauthorized("wrong login");
   }
 
-  if (user.PASSWORD !== firstPassword) {
+  if (user.PASSWORD !== FIRST_PASSWORD) {
     next();
     return;
   }
