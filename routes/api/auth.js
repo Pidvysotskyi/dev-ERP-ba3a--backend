@@ -6,7 +6,7 @@ const { newUserSchema, loginUserSchema } = require("../../schemas/");
 const router = express.Router();
 
 // router.post("/register", validation(newUserSchema), ctrlWrapper(ctrl.signup));
-router.post("/login", ctrlWrapper(ctrl.firstLogin), ctrlWrapper(ctrl.login));
+router.post("/login", validation(loginUserSchema), ctrlWrapper(ctrl.firstLogin), ctrlWrapper(ctrl.login));
 router.post("/logout", auth, ctrlWrapper(ctrl.logout));
 
 module.exports = router;
