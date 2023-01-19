@@ -1,9 +1,9 @@
 const { User } = require("../../models");
 
 const logout = async (req, res) => {
-  const { A_AUTHORIZATION_ID } = req.user;
+  const { DA_EMPLOYEE_ID } = req.user;
 
-  await User.resetToken(A_AUTHORIZATION_ID);
+  await User.resetToken(DA_EMPLOYEE_ID);
   res.status(204).json();
 };
 

@@ -5,7 +5,7 @@ const changePass = async (req, res, next) => {
 
   await User.setPassword(id, password);
 
-  const [[user], _] = await User.getById(id);
+  const user = await User.getById(id);
 
   req.user = user;
 

@@ -11,22 +11,22 @@ const login = async (req, res, next) => {
     throw new Unauthorized("wrong login");
   }
 
-  const checkPass = User.comparePassword(password, user.A_PASSWORD);
+  const checkPass = User.comparePassword(password, user.DA_PASSWORD);
 
   if (!checkPass) {
     throw new Unauthorized("wrong password");
   }
 
   const payload = {
-    id: user.A_AUTHORIZATION_ID,
+    id: user.DA_EMPLOYEE_ID,
   };
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
-  await User.setToken(user.A_AUTHORIZATION_ID, token);
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "5h" });
+  await User.setToken(user.DA_EMPLOYEE_ID, token);
 
   res.json({
     token,
     user: {
-      login: user.A_LOGIN,
+      login: user.DA_LOGIN,
     },
   });
 };
