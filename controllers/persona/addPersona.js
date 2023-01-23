@@ -1,22 +1,18 @@
 const { Persona } = require("../../models");
-const { Conflict } = require("http-errors");
 
 const addPersona = async (req, res, next) => {
+  const { DA_LOGIN } = req.user;
+
   const personaInfo = req.body;
 
-  const fullname = [personaInfo.firstName, personaInfo.surName, personaInfo.lastName].join(" ");
-
   const allPersons = await Persona.getAll();
-
-  const ifExist = allPersons.find(item => item.CA_FULL_NAME === fullname);
-
-  if (ifExist) {
-    throw new Conflict("Person already exist");
-  }
 
   const idArray = allPersons.map(item => item.CA_PERSONA_ID);
 
   personaInfo.id = Math.max(...idArray) + 1;
+  personaInfo.user = DA_LOGIN;
+
+  console.log(personaInfo.user);
 
   const newPersona = new Persona(personaInfo);
 

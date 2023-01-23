@@ -6,10 +6,12 @@ class Client {
     this.NAME_CLIENT = NAME_CLIENT;
   }
 
-  static getAll() {
-    const sql = "SELECT * FROM CLIENT_T";
+  static async getAll() {
+    const sql = `SELECT * FROM gdxem63mnchn3886.DC_CLIENT_T`;
 
-    return db.execute(sql);
+    const [result, _] = await db.execute(sql);
+
+    return result;
   }
 }
 

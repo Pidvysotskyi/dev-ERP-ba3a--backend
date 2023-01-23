@@ -1,11 +1,12 @@
 const db = require("../config/db");
 
 class Persona {
-  constructor({ id, firstName, lastName, surName }) {
+  constructor({ id, firstName, lastName, surName, user }) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.surName = surName;
+    this.user = user;
   }
 
   static async getAll() {

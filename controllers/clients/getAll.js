@@ -1,8 +1,8 @@
 const { Client } = require("../../models");
 
 const getClients = async (req, res, next) => {
-  const [clients, _] = await Client.getAll();
-  res.status(200).json({ clients });
+  const allClients = await Client.getAll();
+  res.status(200).json(allClients);
 };
 
 module.exports = getClients;
