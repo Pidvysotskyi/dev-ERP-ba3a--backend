@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { transliteration } = require("../modifiers");
 
 class Persona {
   constructor({ id, firstName, lastName, surName, user }) {
@@ -28,9 +29,11 @@ class Persona {
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const fullName = [this.firstName, this.surName, this.lastName].join(" ");
+    const engFirstName = transliteration(this.firstName);
+    const engLastName = transliteration(this.lastName);
     const sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
-        (CA_PERSONA_ID, CA_DATE_CREATION, CA_DATE_MODI, CA_FIRST_NAME, CA_SECOND_NAME, CA_SUR_NAME, CA_FULL_NAME)
-        VALUES('${this.id}', '${creationDate}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.surName}', '${fullName}')`;
+        (CA_PERSONA_ID, CA_DATE_CREATION, CA_DATE_MODI, CA_FIRST_NAME, CA_SECOND_NAME, CA_SUR_NAME, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_SUR_NAME_ENG)
+        VALUES('${this.id}', '${creationDate}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.surName}', '${fullName}', '${engFirstName}', '${engLastName}')`;
 
     return db.execute(sql);
   }

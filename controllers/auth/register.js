@@ -1,15 +1,16 @@
 const { User, Persona } = require("../../models");
 const { Conflict } = require("http-errors");
+const { transliteration } = require("../../modifiers");
 
 const register = async (req, res, next) => {
-  const { personaId, login } = req.body;
+  const { personaId } = req.body;
 
   const users = await User.getAll();
 
-  const user = users.find(item => item.DA_LOGIN === login) || users.find(item => item.CA_PERSONA_ID === personaId);
+  const user = users.find(item => item.CA_PERSONA_ID === personaId);
 
   if (user) {
-    throw new Conflict(`same login or Persona_ID already exist`);
+    throw new Conflict(`same Persona_ID already exist`);
   }
 
   const idArray = users.map(item => item.DA_EMPLOYEE_ID);
@@ -23,6 +24,8 @@ const register = async (req, res, next) => {
   if (!person) {
     throw new Conflict(`Cannot find the Person with id:${personaId}`);
   }
+
+  const login = [transliteration(person.CA_SECOND_NAME), person.CA_PERSONA_ID].join("-");
 
   const userInfo = {
     id,

@@ -12,8 +12,6 @@ const addPersona = async (req, res, next) => {
   personaInfo.id = Math.max(...idArray) + 1;
   personaInfo.user = DA_LOGIN;
 
-  console.log(personaInfo.user);
-
   const newPersona = new Persona(personaInfo);
 
   await newPersona.add();
