@@ -6,6 +6,7 @@ const { updatePassSchema } = require("../../schemas/");
 
 const router = express.Router();
 
+router.post("/add", auth, ctrlWrapper(ctrl.addUser));
 router.patch("/changePass", validation(updatePassSchema), ctrlWrapper(ctrl.changePass), ctrlWrapper(authCtrl.login));
 router.get("/getCurrentUser", auth, ctrlWrapper(ctrl.getCurrentUser));
 

@@ -1,40 +1,30 @@
 const { Persona } = require("../../models");
 
 const addPersona = async (req, res, next) => {
-  const { DA_EMPLOYEE_ID: user } = req.user;
+  const { DA_LOGIN: user } = req.user;
 
-  console.log(req.body, "Отримане тіло в контролері");
-
-  const { firstName, lastName, surName = " " } = req.body;
-  console.log(firstName, "імя");
-  console.log(lastName, "Прізвище");
-  console.log(surName, "По батькові");
-
-  const allPersons = await Persona.getAll();
-
-  const idArray = allPersons.map(item => item.CA_PERSONA_ID);
-
-  const id = Math.max(...idArray) + 1;
+  const { firstName, lastName, patronym = null } = req.body;
 
   const personaInfo = {
     firstName,
     lastName,
-    surName,
-    id,
+    patronym,
     user,
   };
 
-  console.log(personaInfo, "повне інфо для створення");
+  const persona = new Persona(personaInfo);
 
-  const newPersona = new Persona(personaInfo);
+  const id = await persona.add();
 
-  await newPersona.add();
+  console.log(id);
 
-  const addedPersona = await Persona.getById(newPersona.id);
+  const result = await Persona.getById(id);
+
+  console.log(result);
 
   res.status(201).json({
     message: "Persona created",
-    persona: addedPersona,
+    persona: result,
   });
 };
 
