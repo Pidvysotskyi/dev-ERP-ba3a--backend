@@ -4,6 +4,8 @@ const addPersona = async (req, res, next) => {
   const { DA_LOGIN } = req.user;
 
   const personaInfo = req.body;
+  console.log("Отримали інформацію про персону");
+  console.log(personaInfo);
 
   const allPersons = await Persona.getAll();
 
@@ -11,6 +13,9 @@ const addPersona = async (req, res, next) => {
 
   personaInfo.id = Math.max(...idArray) + 1;
   personaInfo.user = DA_LOGIN;
+
+  console.log("повне інфо для створення");
+  console.log(personaInfo);
 
   const newPersona = new Persona(personaInfo);
 

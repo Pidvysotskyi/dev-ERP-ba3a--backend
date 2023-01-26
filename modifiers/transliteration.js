@@ -1,7 +1,7 @@
-const { transliterate } = require("transliteration");
+const translit = require("ua-en-translit");
 
 const transliteration = word => {
-  return transliterate(word);
+  return translit(word);
 };
 
 module.exports = transliteration;
