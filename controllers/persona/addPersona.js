@@ -3,9 +3,10 @@ const { Persona } = require("../../models");
 const addPersona = async (req, res, next) => {
   const { DA_LOGIN } = req.user;
 
+  console.log(req.body, "Отримане тіло в контролері");
+
   const personaInfo = req.body;
-  console.log("Отримали інформацію про персону");
-  console.log(personaInfo);
+  console.log(personaInfo, "Персона інфо");
 
   const allPersons = await Persona.getAll();
 
