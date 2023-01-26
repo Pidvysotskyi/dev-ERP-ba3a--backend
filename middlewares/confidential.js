@@ -15,7 +15,7 @@ const confidential = (req, res, next) => {
 
   console.log(req.body, "Тіло перед присвоєнням конфіденційного імя");
 
-  req.body = CONF_PERSONA;
+  req.body = { ...CONF_PERSONA };
   console.log(req.body, "Тіло перед передачею на котрролер");
   console.log("Передали на створення конфеденційної персони");
   next();
