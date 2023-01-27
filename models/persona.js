@@ -32,7 +32,7 @@ class Persona {
 
     const idArray = ids.map(item => item.id);
 
-    const result = Math.max(...idArray) + 1;
+    const result = idArray.length === 0 ? 1 : Math.max(...idArray) + 1;
 
     return result;
   }

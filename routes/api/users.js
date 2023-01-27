@@ -2,7 +2,7 @@ const express = require("express");
 const { users: ctrl, auth: authCtrl } = require("../../controllers");
 
 const { validation, ctrlWrapper, auth } = require("../../middlewares");
-const { updatePassSchema } = require("../../schemas/");
+const { updatePassSchema, newUserSchema } = require("../../schemas/");
 
 const router = express.Router();
 
