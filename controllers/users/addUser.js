@@ -2,7 +2,7 @@ const { User, Persona, OrgStructure } = require("../../models");
 const { Conflict } = require("http-errors");
 
 const register = async (req, res, next) => {
-  const { DA_LOGIN: user } = req.user;
+  const { DA_EMPLOYEE_ID: creatorId } = req.user;
   const { personaId, orgStructureId } = req.body;
 
   const person = await Persona.getById(personaId);
@@ -30,7 +30,7 @@ const register = async (req, res, next) => {
     fullName: person.CA_FULL_NAME,
     login,
     orgStructureId,
-    user,
+    creatorId,
   };
 
   const newUser = new User(userInfo);

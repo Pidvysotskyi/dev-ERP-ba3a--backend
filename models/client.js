@@ -1,10 +1,10 @@
 const db = require("../config/db");
 
 class Client {
-  constructor({ personaId, orgStructureId, user }) {
+  constructor({ personaId, orgStructureId, creatorId }) {
     this.personaId = personaId;
     this.orgStructureId = orgStructureId;
-    this.user = user;
+    this.creator = creatorId;
   }
 
   static async getAll() {
@@ -54,7 +54,7 @@ class Client {
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.DC_CLIENT_T
     (DC_CLIENT_IN, CA_PERSONA_ID, EA_ORG_STRUCTURE_IN, DC_CREATOR, DC_DATA_CREATION, DC_MODIFIER, DC_DATE_MODI)
-    VALUES ('${id}', '${this.personaId}', '${this.orgStructureId}', '${this.user}', '${creationDate}', '${this.user}', '${creationDate}');`;
+    VALUES ('${id}', '${this.personaId}', '${this.orgStructureId}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}');`;
     await db.execute(sql);
     return id;
   }

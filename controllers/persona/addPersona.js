@@ -1,7 +1,7 @@
 const { Persona } = require("../../models");
 
 const addPersona = async (req, res, next) => {
-  const { DA_LOGIN: user } = req.user;
+  const { DA_EMPLOYEE_ID: creatorId } = req.user;
 
   const { firstName, lastName, patronym = null } = req.body;
 
@@ -9,7 +9,7 @@ const addPersona = async (req, res, next) => {
     firstName,
     lastName,
     patronym,
-    user,
+    creatorId,
   };
 
   const persona = new Persona(personaInfo);

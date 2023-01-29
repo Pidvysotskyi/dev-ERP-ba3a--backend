@@ -2,11 +2,11 @@ const db = require("../config/db");
 const { transliteration } = require("../modifiers");
 
 class Persona {
-  constructor({ firstName, lastName, patronym, user }) {
+  constructor({ firstName, lastName, patronym, creatorId }) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.patronym = patronym;
-    this.user = user;
+    this.creator = creatorId;
   }
 
   static async getAll() {
@@ -46,7 +46,7 @@ class Persona {
     const engLastName = transliteration(this.lastName);
     const sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
         (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_PATRONYM, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
-        VALUES('${id}', '${this.user}', '${creationDate}', '${this.user}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.patronym}', '${fullName}', '${engFirstName}', '${engLastName}')`;
+        VALUES('${id}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.patronym}', '${fullName}', '${engFirstName}', '${engLastName}')`;
     await db.execute(sql);
     return id;
   }

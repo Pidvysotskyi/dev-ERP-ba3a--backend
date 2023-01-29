@@ -2,7 +2,7 @@ const { Client, Persona, OrgStructure } = require("../../models");
 const { Conflict } = require("http-errors");
 
 const addClient = async (req, res, next) => {
-  const { DA_LOGIN: user } = req.user;
+  const { DA_EMPLOYEE_ID: creatorId } = req.user;
   const { personaId, orgStructureId } = req.body;
 
   const person = await Persona.getById(personaId);
@@ -26,7 +26,7 @@ const addClient = async (req, res, next) => {
   const clientInfo = {
     personaId,
     orgStructureId,
-    user,
+    creatorId,
   };
 
   const newClient = new Client(clientInfo);
