@@ -37,7 +37,7 @@ const addClient = async (req, res, next) => {
 
   res.status(201).json({
     message: "Client Created",
-    persona: addedClient,
+    client: addedClient,
   });
 };
 
