@@ -31,7 +31,7 @@ class Client {
   }
 
   async add() {
-    const id = [this.personaId, this.orgStructure].join("-");
+    const id = [this.orgStructure, this.personaId].join("-");
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.DC_CLIENT_T
