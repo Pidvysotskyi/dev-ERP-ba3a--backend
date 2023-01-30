@@ -11,7 +11,7 @@ const addClient = async (req, res, next) => {
     throw new Conflict(`Cannot find the Person with id:${personaId}`);
   }
 
-  const orgStructure = await OrgStructure.getById(orgStructureId);
+  const orgStructure = await OrgStructure.getShortNameById(orgStructureId);
 
   if (!orgStructure) {
     throw new Conflict(`Cannot find the Organisation with id:${orgStructureId}`);
@@ -25,7 +25,7 @@ const addClient = async (req, res, next) => {
 
   const clientInfo = {
     personaId,
-    orgStructureId,
+    orgStructure,
     creatorId,
   };
 
