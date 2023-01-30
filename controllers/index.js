@@ -3,6 +3,7 @@ const users = require("./users");
 const persona = require("./persona");
 const clients = require("./clients");
 const orgStructure = require("./orgStructure");
+const projects = require("./projects");
 
 module.exports = {
   auth,
@@ -10,4 +11,5 @@ module.exports = {
   persona,
   clients,
   orgStructure,
+  projects,
 };

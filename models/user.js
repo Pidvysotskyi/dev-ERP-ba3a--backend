@@ -73,7 +73,7 @@ class User {
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.DA_EMPLOYEE_T
     (DA_EMPLOYEE_ID, DA_EMPLOYEE_NAME, CA_PERSONA_ID, EA_ORG_STRUCTURE_IN, DA_CREATOR, DA_DATA_CREATION, DA_MODIFIER, DA_DATE_MODI, DA_LOGIN, DA_PASSWORD)
-    VALUES ('${id}', '${this.fullName}', '${this.personaId}', '${this.orgStructureId}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.login}', '${FIRST_PASSWORD}');`;
+    VALUES ('${id}', '${this.fullName}', '${this.personaId}', '${this.orgStructureId}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.login}', '${FIRST_PASSWORD}')`;
     await db.execute(sql);
     return id;
   }

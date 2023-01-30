@@ -14,8 +14,6 @@ class OrgStructure {
 
     const [[result], _] = await db.execute(sql);
 
-    console.log(result);
-
     return result;
   }
 
@@ -23,8 +21,6 @@ class OrgStructure {
     const sql = `SELECT EA_SHORT_NAME_ORG AS shortName FROM gdxem63mnchn3886.EA_ORG_STRUCTURE_T WHERE EA_ORG_STRUCTURE_IN = '${ID}'`;
 
     const [[result], _] = await db.execute(sql);
-
-    console.log(result);
 
     if (!result) {
       return null;

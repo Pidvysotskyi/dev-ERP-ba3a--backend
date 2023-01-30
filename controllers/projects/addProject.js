@@ -1,20 +1,37 @@
-const { Project } = require("../../models");
+const { Project, Client, OrgStructure } = require("../../models");
+const { Conflict } = require("http-errors");
 
 const addProject = async (req, res, next) => {
-  const { ID_DEP_CLIENT } = req.body;
-  const [projects, _] = await Project.getAll();
-  const date = new Date();
-  const stringDate = [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("");
-  const todaysProjects = projects.filter(item => item.ID_PROJECT.split("_")[1] === stringDate);
-  const ID = todaysProjects.length + 1;
-  const ID_PROJECT = `${ID_DEP_CLIENT}_${stringDate}`;
+  // const { DA_EMPLOYEE_ID: creatorId } = req.user;
+  const { clientId, userId, orgStructureId } = req.body;
 
-  const project = new Project(ID, ID_DEP_CLIENT, ID_PROJECT);
-  await project.add();
+  const client = await Client.getById(clientId);
 
-  res.json({
-    message: "Succesfuly added",
-    project,
+  if (!client) {
+    throw new Conflict(`Cannot find the Client ${clientId}`);
+  }
+
+  const orgStructure = await OrgStructure.getById(orgStructureId);
+
+  if (!orgStructure) {
+    throw new Conflict(`Cannot find the Organisation with id:${orgStructureId}`);
+  }
+
+  const projectInfo = {
+    clientId,
+    orgStructureId,
+    userId,
+  };
+
+  const newProject = new Project(projectInfo);
+
+  const key = await newProject.add();
+
+  const addedProject = await Project.getByKey(key);
+
+  res.status(201).json({
+    message: `Project ${key} Created`,
+    project: addedProject,
   });
 };
 
