@@ -2,8 +2,8 @@ const { Project, Client, OrgStructure } = require("../../models");
 const { Conflict } = require("http-errors");
 
 const addProject = async (req, res, next) => {
-  // const { DA_EMPLOYEE_ID: creatorId } = req.user;
-  const { clientId, userId, orgStructureId } = req.body;
+  const { DA_EMPLOYEE_ID: userId } = req.user;
+  const { clientId, orgStructureId } = req.body;
 
   const client = await Client.getById(clientId);
 

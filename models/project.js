@@ -7,62 +7,6 @@ class Project {
     this.orgStructureId = orgStructureId;
   }
 
-  static async getAll() {
-    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey" 
-    FROM gdxem63mnchn3886.FA_PROJECT_T`;
-    const [projects, _] = await db.execute(sql);
-
-    if (projects.length === 0) {
-      return [];
-    }
-
-    const result = projects.map(item => item.projectKey);
-
-    return result;
-  }
-
-  static async getByKey(key) {
-    const [projectIn, orgstructure, personaId] = key.split("-");
-    const client = [orgstructure, personaId].join("-");
-
-    const sql = `SELECT *, CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
-    FROM gdxem63mnchn3886.FA_PROJECT_T
-     WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
-    const [[result], _] = await db.execute(sql);
-
-    return result;
-  }
-
-  static async getForClient(id) {
-    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
-    FROM gdxem63mnchn3886.FA_PROJECT_T
-    WHERE DC_CLIENT_IN = "${id}"`;
-    const [projects, _] = await db.execute(sql);
-
-    if (projects.length === 0) {
-      return [];
-    }
-
-    const result = projects.map(item => item.projectKey);
-
-    return result;
-  }
-
-  static async getForUser(id) {
-    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
-    FROM gdxem63mnchn3886.FA_PROJECT_T
-    WHERE DA_EMPLOYEE_ID = "${id}"`;
-    const [projects, _] = await db.execute(sql);
-
-    if (projects.length === 0) {
-      return [];
-    }
-
-    const result = projects.map(item => item.projectKey);
-
-    return result;
-  }
-
   async newId() {
     const sql = `SELECT FA_PROJECT_IN AS id
     FROM gdxem63mnchn3886.FA_PROJECT_T
@@ -73,6 +17,80 @@ class Project {
     const idArray = ids.map(item => item.id);
 
     const result = idArray.length === 0 ? 1 : Math.max(...idArray) + 1;
+
+    return result;
+  }
+
+  static async getProjectKeysArray(sql) {
+    const [projects, _] = await db.execute(sql);
+
+    if (projects.length === 0) {
+      return [];
+    }
+
+    const result = projects.map(item => item.projectKey);
+
+    return result;
+  }
+
+  static splitKey(key) {
+    const [projectIn, orgstructure, personaId] = key.split("-");
+    const client = [orgstructure, personaId].join("-");
+
+    return {
+      projectIn,
+      client,
+    };
+  }
+
+  static async getAll() {
+    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey" 
+    FROM gdxem63mnchn3886.FA_PROJECT_T`;
+    const result = await this.getProjectKeysArray(sql);
+    return result;
+  }
+
+  static async getForClient(id) {
+    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
+    FROM gdxem63mnchn3886.FA_PROJECT_T
+    WHERE DC_CLIENT_IN = "${id}"`;
+    const result = await this.getProjectKeysArray(sql);
+    return result;
+  }
+
+  static async getForUser(id) {
+    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
+    FROM gdxem63mnchn3886.FA_PROJECT_T
+    WHERE DA_EMPLOYEE_ID = "${id}"`;
+    const result = await this.getProjectKeysArray(sql);
+    return result;
+  }
+
+  static async getForOrg(id) {
+    const sql = `SELECT CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
+    FROM gdxem63mnchn3886.FA_PROJECT_T
+    WHERE EA_ORG_STRUCTURE_IN = "${id}"`;
+    const result = await this.getProjectKeysArray(sql);
+    return result;
+  }
+
+  static async getByKey(key) {
+    const { projectIn, client } = this.splitKey(key);
+
+    const sql = `SELECT *, CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey"
+    FROM gdxem63mnchn3886.FA_PROJECT_T
+     WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
+    const [[result], _] = await db.execute(sql);
+
+    return result;
+  }
+
+  static async delete(key) {
+    const { projectIn, client } = this.splitKey(key);
+    const sql = `DELETE FROM gdxem63mnchn3886.FA_PROJECT_T
+    WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
+
+    const [result, _] = await db.execute(sql);
 
     return result;
   }
