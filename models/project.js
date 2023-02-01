@@ -87,11 +87,11 @@ class Project {
               dis.DD_DESIGNER_NAME AS "designerName",
               pro.FA_DESIGN_NUM_IN AS "designNumber"
               FROM gdxem63mnchn3886.FA_PROJECT_T pro
-              JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
+              LEFT JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
               ON pro.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN
-              JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
+              LEFT JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
               ON pro.DA_EMPLOYEE_ID = emp.DA_EMPLOYEE_ID
-              JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
+              LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
               ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID
               WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
     const [[result], _] = await db.execute(sql);
