@@ -5,6 +5,7 @@ const getforClient = require("./getForClient");
 const getforUser = require("./getForUser");
 const getforOrg = require("./getForOrg");
 const deleteProject = require("./deleteProject");
+const getforCurrent = require("./getForCurrent");
 
 module.exports = {
   getAll,
@@ -14,4 +15,5 @@ module.exports = {
   getforUser,
   getforOrg,
   deleteProject,
+  getforCurrent,
 };
