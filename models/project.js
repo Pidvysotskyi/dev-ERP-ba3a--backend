@@ -79,13 +79,19 @@ class Project {
 
     const sql = `SELECT
               CONCAT(pro.FA_PROJECT_IN, "-", pro.DC_CLIENT_IN) AS "projectKey",
+              pro.DC_CLIENT_IN AS "client",
               pro.EA_ORG_STRUCTURE_IN AS "orgId",
               org.EA_FULL_NAME_ORG AS "orgName",
               pro.DA_EMPLOYEE_ID AS "userId",
               emp.DA_EMPLOYEE_NAME AS "userName",
               pro.DD_DESIGNER_ID AS "designerId",
               dis.DD_DESIGNER_NAME AS "designerName",
-              pro.FA_DESIGN_NUM_IN AS "designNumber"
+              pro.FA_DESIGN_NUM_IN AS "designNumber",
+              pro.FA_PROJECT_ADRESS AS "projectAdress",
+              pro.FA_BALANCE_CLIENT AS "clientBalance",
+              pro.FA_PROJECT_STATUS AS "projectStatus",
+              pro.FA_DATE_CREATION AS "creationDate",
+              pro.FA_DATE_FIN AS "finalDate"
               FROM gdxem63mnchn3886.FA_PROJECT_T pro
               LEFT JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
               ON pro.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN
