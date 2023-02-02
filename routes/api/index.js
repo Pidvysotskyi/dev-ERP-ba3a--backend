@@ -4,6 +4,7 @@ const personaRouter = require("./persona");
 const clientsRouter = require("./clients");
 const orgStructureRouter = require("./orgStructure");
 const projectsRouter = require("./projects");
+const designerRouter = require("./designer");
 
 module.exports = {
   authRouter,
@@ -12,4 +13,5 @@ module.exports = {
   clientsRouter,
   orgStructureRouter,
   projectsRouter,
+  designerRouter,
 };
