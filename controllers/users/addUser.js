@@ -3,7 +3,7 @@ const { Conflict } = require("http-errors");
 
 const register = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: creatorId } = req.user;
-  const { personaId, orgStructureId } = req.body;
+  const { personaId, orgStructureId, positionId } = req.body;
 
   const person = await Persona.getById(personaId);
 
@@ -31,6 +31,7 @@ const register = async (req, res, next) => {
     login,
     orgStructureId,
     creatorId,
+    positionId,
   };
 
   const newUser = new User(userInfo);

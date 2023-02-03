@@ -8,7 +8,12 @@ class Designer {
   }
 
   static async getAll() {
-    const sql = `SELECT * FROM gdxem63mnchn3886.DD_DESIGNER_T`;
+    const sql = `SELECT
+    DD_DESIGNER_ID AS "designerId",
+    DD_DESIGNER_NAME AS "designerName",
+    DD_AGENT_BONUS AS "designerBonus",
+    DD_NOTE AS "designerNote"
+    FROM gdxem63mnchn3886.DD_DESIGNER_T`;
 
     const [result, _] = await db.execute(sql);
 

@@ -5,6 +5,7 @@ const clientsRouter = require("./clients");
 const orgStructureRouter = require("./orgStructure");
 const projectsRouter = require("./projects");
 const designerRouter = require("./designer");
+const positionRouter = require("./position");
 
 module.exports = {
   authRouter,
@@ -14,4 +15,5 @@ module.exports = {
   orgStructureRouter,
   projectsRouter,
   designerRouter,
+  positionRouter,
 };

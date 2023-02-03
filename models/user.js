@@ -3,12 +3,13 @@ const db = require("../config/db");
 const { FIRST_PASSWORD } = require("../config");
 
 class User {
-  constructor({ personaId, login, fullName, orgStructureId, creatorId }) {
+  constructor({ personaId, login, fullName, orgStructureId, creatorId, positionId }) {
     this.login = login;
     this.personaId = personaId;
     this.fullName = fullName;
     this.orgStructureId = orgStructureId;
     this.creator = creatorId;
+    this.position = positionId;
   }
 
   static async getAll() {
@@ -19,8 +20,8 @@ class User {
     return result;
   }
 
-  static async getById(ID) {
-    const sql = `SELECT * FROM gdxem63mnchn3886.DA_EMPLOYEE_T where DA_EMPLOYEE_ID = '${ID}'`;
+  static async getById(id) {
+    const sql = `SELECT * FROM gdxem63mnchn3886.DA_EMPLOYEE_T where DA_EMPLOYEE_ID = '${id}'`;
 
     const [[result], _] = await db.execute(sql);
 
@@ -34,19 +35,19 @@ class User {
     return result;
   }
 
-  static setPassword(ID, password) {
+  static setPassword(id, password) {
     const newPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_PASSWORD = '${newPassword}' WHERE (DA_EMPLOYEE_ID = '${ID}')`;
+    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_PASSWORD = '${newPassword}' WHERE (DA_EMPLOYEE_ID = '${id}')`;
     return db.execute(sql);
   }
 
-  static setToken(ID, token) {
-    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_TOKEN = '${token}' WHERE (DA_EMPLOYEE_ID = '${ID}')`;
+  static setToken(id, token) {
+    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_TOKEN = '${token}' WHERE (DA_EMPLOYEE_ID = '${id}')`;
     return db.execute(sql);
   }
 
-  static resetToken(ID) {
-    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_TOKEN = NULL WHERE (DA_EMPLOYEE_ID = '${ID}')`;
+  static resetToken(id) {
+    const sql = `UPDATE gdxem63mnchn3886.DA_EMPLOYEE_T SET DA_TOKEN = NULL WHERE (DA_EMPLOYEE_ID = '${id}')`;
     return db.execute(sql);
   }
 
@@ -72,8 +73,8 @@ class User {
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.DA_EMPLOYEE_T
-    (DA_EMPLOYEE_ID, DA_EMPLOYEE_NAME, CA_PERSONA_ID, EA_ORG_STRUCTURE_IN, DA_CREATOR, DA_DATA_CREATION, DA_MODIFIER, DA_DATE_MODI, DA_LOGIN, DA_PASSWORD)
-    VALUES ('${id}', '${this.fullName}', '${this.personaId}', '${this.orgStructureId}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.login}', '${FIRST_PASSWORD}')`;
+    (DA_EMPLOYEE_ID, DA_EMPLOYEE_NAME, CA_PERSONA_ID, EA_ORG_STRUCTURE_IN, DA_CREATOR, DA_DATA_CREATION, DA_MODIFIER, DA_DATE_MODI, DA_LOGIN, DA_PASSWORD, EE_EMPLOYEE_POSITION_ID)
+    VALUES ('${id}', '${this.fullName}', '${this.personaId}', '${this.orgStructureId}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.login}', '${FIRST_PASSWORD}', '${this.position}')`;
     await db.execute(sql);
     return id;
   }

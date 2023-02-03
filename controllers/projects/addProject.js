@@ -3,7 +3,7 @@ const { Conflict } = require("http-errors");
 
 const addProject = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { clientId, orgStructureId, designerId, projectAdress, finalDate } = req.body;
+  const { clientId, orgStructureId, designerId, designNumber, projectAdress, finalDate } = req.body;
 
   const client = await Client.getById(clientId);
 
@@ -22,9 +22,12 @@ const addProject = async (req, res, next) => {
     orgStructureId,
     userId,
     designerId,
+    designNumber,
     projectAdress,
     finalDate,
   };
+
+  console.log(designerId);
 
   const newProject = new Project(projectInfo);
 

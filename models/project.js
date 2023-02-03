@@ -1,11 +1,12 @@
 const db = require("../config/db");
 
 class Project {
-  constructor({ clientId, userId, orgStructureId, designerId, projectAdress, finalDate }) {
+  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate }) {
     this.client = clientId;
     this.user = userId;
     this.orgStructureId = orgStructureId;
     this.designer = designerId;
+    this.designNumber = designNumber;
     this.projectAdress = projectAdress;
     this.finalDate = finalDate;
   }
@@ -13,8 +14,8 @@ class Project {
   static baseQueries = {
     selectProject: `SELECT
               CONCAT(pro.FA_PROJECT_IN, "-", pro.DC_CLIENT_IN) AS "projectKey",
-              pro.DC_CLIENT_IN AS "client",
-              pro.EA_ORG_STRUCTURE_IN AS "orgId",
+              pro.DC_CLIENT_IN AS "clientId",
+              pro.EA_ORG_STRUCTURE_IN AS "orgStructureId",
               org.EA_FULL_NAME_ORG AS "orgName",
               pro.DA_EMPLOYEE_ID AS "userId",
               emp.DA_EMPLOYEE_NAME AS "userName",
@@ -130,8 +131,8 @@ class Project {
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.FA_PROJECT_T
-(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN)
-VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', '${creationDate}', '${creationDate}', '${this.user}', '${this.designerId}', '${this.projectAdress}', '${this.finalDate}')`;
+(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN)
+VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', '${creationDate}', '${creationDate}', '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}')`;
     await db.execute(sql);
     return [id, this.client].join("-");
   }
