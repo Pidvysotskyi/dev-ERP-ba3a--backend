@@ -13,37 +13,39 @@ class Project {
 
   static baseQueries = {
     selectProject: `SELECT
-              CONCAT(pro.FA_PROJECT_IN, "-", pro.DC_CLIENT_IN) AS "projectKey",
-              pro.DC_CLIENT_IN AS "clientId",
-              pro.EA_ORG_STRUCTURE_IN AS "orgStructureId",
-              org.EA_FULL_NAME_ORG AS "orgName",
-              pro.DA_EMPLOYEE_ID AS "userId",
-              emp.DA_EMPLOYEE_NAME AS "userName",
-              pro.DD_DESIGNER_ID AS "designerId",
-              dis.DD_DESIGNER_NAME AS "designerName",
-              pro.FA_DESIGN_NUM_IN AS "designNumber",
-              pro.FA_PROJECT_ADRESS AS "projectAdress",
-              pro.FA_BALANCE_CLIENT AS "clientBalance",
-              pro.FA_PROJECT_STATUS AS "projectStatus",
-              pro.FA_DATE_CREATION AS "creationDate",
-              pro.FA_DATE_FIN AS "finalDate"
-              FROM gdxem63mnchn3886.FA_PROJECT_T pro`,
+            CONCAT(pro.FA_PROJECT_IN, "-", pro.DC_CLIENT_IN) AS "projectKey",
+            pro.DC_CLIENT_IN AS "clientId",
+            pro.EA_ORG_STRUCTURE_IN AS "orgStructureId",
+            org.EA_FULL_NAME_ORG AS "orgName",
+            pro.DA_EMPLOYEE_ID AS "userId",
+            emp.DA_EMPLOYEE_NAME AS "userName",
+            pro.DD_DESIGNER_ID AS "designerId",
+            dis.DD_DESIGNER_NAME AS "designerName",
+            dis.DD_AGENT_BONUS AS "designerBonus",
+            pro.FA_DESIGN_NUM_IN AS "designNumber",
+            pro.FA_PROJECT_ADRESS AS "projectAdress",
+            pro.FA_BALANCE_CLIENT AS "clientBalance",
+            pro.FA_PROJECT_STATUS AS "projectStatus",
+            pro.FA_DATE_CREATION AS "creationDate",
+            pro.FA_DATE_FIN AS "finalDate"
+            FROM gdxem63mnchn3886.FA_PROJECT_T pro
+            LEFT JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
+            ON pro.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN
+            LEFT JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
+            ON pro.DA_EMPLOYEE_ID = emp.DA_EMPLOYEE_ID
+            LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
+            ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID`,
     selectArray: `SELECT
-              CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey",
-              pro.DD_DESIGNER_ID AS "designerId",
-              dis.DD_DESIGNER_NAME  AS "designerName",
-              pro.FA_PROJECT_ADRESS  AS "projectAdress",
-              pro.FA_DATE_CREATION  AS "creationDate",
-              pro.FA_DATE_FIN AS "finalDate",
-              pro.FA_PROJECT_STATUS AS "projectStatus"
-              FROM gdxem63mnchn3886.FA_PROJECT_T pro`,
-
-    joinDesigner: `LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
-                  ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID`,
-    joinUser: `LEFT JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
-              ON pro.DA_EMPLOYEE_ID = emp.DA_EMPLOYEE_ID`,
-    joinOrgStructure: `LEFT JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
-              ON pro.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN`,
+            CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey",
+            pro.DD_DESIGNER_ID AS "designerId",
+            dis.DD_DESIGNER_NAME  AS "designerName",
+            pro.FA_PROJECT_ADRESS  AS "projectAdress",
+            pro.FA_DATE_CREATION  AS "creationDate",
+            pro.FA_DATE_FIN AS "finalDate",
+            pro.FA_PROJECT_STATUS AS "projectStatus"
+            FROM gdxem63mnchn3886.FA_PROJECT_T pro
+            LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
+            ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID`,
   };
 
   async newId() {
@@ -61,8 +63,8 @@ class Project {
   }
 
   static async getSpecificArray(sqlCondition) {
-    const { selectArray, joinDesigner } = this.baseQueries;
-    const sql = [selectArray, joinDesigner, sqlCondition].join(" ");
+    const { selectArray } = this.baseQueries;
+    const sql = [selectArray, sqlCondition].join(" ");
     const [projects, _] = await db.execute(sql);
     return projects;
   }
@@ -78,8 +80,7 @@ class Project {
   }
 
   static async getAll() {
-    const { selectArray, joinDesigner } = this.baseQueries;
-    const sql = [selectArray, joinDesigner].join(" ");
+    const { selectArray: sql } = this.baseQueries;
     const [projects, _] = await db.execute(sql);
     return projects;
   }
@@ -105,11 +106,11 @@ class Project {
   static async getByKey(key) {
     const { projectIn, client } = this.splitKey(key);
 
-    const { selectProject, joinOrgStructure, joinUser, joinDesigner } = this.baseQueries;
+    const { selectProject } = this.baseQueries;
 
     const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
 
-    const sql = [selectProject, joinOrgStructure, joinUser, joinDesigner, sqlCondition].join(" ");
+    const sql = [selectProject, sqlCondition].join(" ");
 
     const [[result], _] = await db.execute(sql);
 

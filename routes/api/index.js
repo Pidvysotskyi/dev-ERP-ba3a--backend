@@ -6,6 +6,7 @@ const orgStructureRouter = require("./orgStructure");
 const projectsRouter = require("./projects");
 const designerRouter = require("./designer");
 const positionRouter = require("./position");
+const kpRouter = require("./kp");
 
 module.exports = {
   authRouter,
@@ -16,4 +17,5 @@ module.exports = {
   projectsRouter,
   designerRouter,
   positionRouter,
+  kpRouter,
 };

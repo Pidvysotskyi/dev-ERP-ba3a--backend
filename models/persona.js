@@ -7,6 +7,7 @@ class Persona {
     this.lastName = lastName;
     this.patronym = patronym;
     this.creator = creatorId;
+    this.sql = "";
   }
 
   static async getAll() {
@@ -44,10 +45,17 @@ class Persona {
     const fullName = this.patronym ? [this.firstName, this.patronym, this.lastName].join(" ") : [this.firstName, this.lastName].join(" ");
     const engFirstName = transliteration(this.firstName);
     const engLastName = transliteration(this.lastName);
-    const sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
+    if (this.patronym) {
+      this.sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
         (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_PATRONYM, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
         VALUES('${id}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.patronym}', '${fullName}', '${engFirstName}', '${engLastName}')`;
-    await db.execute(sql);
+    } else {
+      this.sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
+        (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
+        VALUES('${id}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${fullName}', '${engFirstName}', '${engLastName}')`;
+    }
+
+    await db.execute(this.sql);
     return id;
   }
 }

@@ -6,6 +6,7 @@ const orgStructure = require("./orgStructure");
 const projects = require("./projects");
 const designer = require("./designer");
 const position = require("./position");
+const kp = require("./kp");
 
 module.exports = {
   auth,
@@ -16,4 +17,5 @@ module.exports = {
   projects,
   designer,
   position,
+  kp,
 };
