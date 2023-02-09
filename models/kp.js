@@ -2,21 +2,22 @@ const db = require("../config/db");
 const Project = require("../models/project");
 
 class Kp {
-  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate }) {
-    this.client = clientId;
-    this.user = userId;
+  constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote }) {
+    this.project = projectKey;
+    this.managerKp = managerKpId;
     this.orgStructureId = orgStructureId;
     this.designer = designerId;
-    this.designNumber = designNumber;
-    this.projectAdress = projectAdress;
+    this.designerBonus = designerBonus;
+    this.startDate = startDate;
     this.finalDate = finalDate;
+    this.kpNote = kpNote;
   }
 
   static baseQueries = {
     selectKp: `SELECT 
             CONCAT(kp.GA_KP_IN, "-", kp.FA_PROJECT_IN, "-", kp.DC_CLIENT_IN) as kpKey,
-            kp.DA_EMPLOYEE_ID AS "userId",
-            emp.DA_EMPLOYEE_NAME AS "userName",
+            kp.DA_EMPLOYEE_ID AS "managerKpId",
+            emp.DA_EMPLOYEE_NAME AS "managerKpName",
             kp.DD_DESIGNER_ID AS "designerId",
             dis.DD_DESIGNER_NAME AS "designerName",
             kp.GA_AGENT_BONUS AS "designerBonus",
@@ -34,10 +35,10 @@ class Kp {
             ON kp.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN`,
     selectArray: `SELECT 
             CONCAT(kp.GA_KP_IN, "-", kp.FA_PROJECT_IN, "-", kp.DC_CLIENT_IN) as kpKey,
-            pro.DA_EMPLOYEE_ID AS "managerId",
-            emp2.DA_EMPLOYEE_NAME AS "managerName",
-            kp.DA_EMPLOYEE_ID AS "userId",
-            emp.DA_EMPLOYEE_NAME AS "userName",
+            pro.DA_EMPLOYEE_ID AS "projectManagerId",
+            emp2.DA_EMPLOYEE_NAME AS "projectManagerName",
+            kp.DA_EMPLOYEE_ID AS "managerKpId",
+            emp.DA_EMPLOYEE_NAME AS "managerKpName",
             kp.GA_NOTE_KP AS "kpNote",
             kp.GA_DATE_CREATION AS "creationDate",
             kp.GA_DATE_FIN AS "finalDate"
@@ -51,9 +52,11 @@ class Kp {
   };
 
   async newId() {
-    const sql = `SELECT FA_PROJECT_IN AS id
-    FROM gdxem63mnchn3886.FA_PROJECT_T
-    WHERE DC_CLIENT_IN = "${this.client}"`;
+    const { projectIn, client } = await Project.splitKey(this.project);
+
+    const sql = `SELECT GA_KP_IN AS id
+    FROM gdxem63mnchn3886.GA_KP_T
+    WHERE DC_CLIENT_IN = "${client}" AND FA_PROJECT_IN = "${projectIn}"`;
 
     const [ids, _] = await db.execute(sql);
 
@@ -122,13 +125,15 @@ class Kp {
 
   async add() {
     const id = await this.newId();
+    const { projectIn, client } = await Project.splitKey(this.project);
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
-    const sql = `INSERT INTO gdxem63mnchn3886.FA_PROJECT_T
-(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN)
-VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', '${creationDate}', '${creationDate}', '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}')`;
+    const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 
+                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP)
+                VALUES
+                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', 'Вітальня');`;
     await db.execute(sql);
-    return [id, this.client].join("-");
+    return [id, this.project].join("-");
   }
 }
 

@@ -6,7 +6,7 @@ const { ctrlWrapper, auth } = require("../../middlewares");
 
 const router = express.Router();
 
-// router.post("/add", auth, ctrlWrapper(ctrl.addProject));
+router.post("/add", auth, ctrlWrapper(ctrl.addKp));
 router.get("/get/:kpKey", auth, ctrlWrapper(ctrl.getKp));
 // router.get("/getAll", auth, ctrlWrapper(ctrl.getAll));
 router.get("/getForProject/:projectKey", auth, ctrlWrapper(ctrl.getForProject));
