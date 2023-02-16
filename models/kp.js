@@ -2,7 +2,7 @@ const db = require("../config/db");
 const Project = require("../models/project");
 
 class Kp {
-  constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote }) {
+  constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote, userId }) {
     this.project = projectKey;
     this.managerKp = managerKpId;
     this.orgStructureId = orgStructureId;
@@ -11,6 +11,7 @@ class Kp {
     this.startDate = startDate;
     this.finalDate = finalDate;
     this.kpNote = kpNote;
+    this.modifier = userId;
   }
 
   static baseQueries = {
@@ -129,9 +130,9 @@ class Kp {
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 
-                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP)
+                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
                 VALUES
-                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', 'Вітальня');`;
+                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
     await db.execute(sql);
     return [id, this.project].join("-");
   }
