@@ -6,6 +6,8 @@ const OrgStructure = require("./orgStructure");
 const Designer = require("./designer");
 const Position = require("./position");
 const Kp = require("./kp");
+const Contract = require("./contract");
+const Annex = require("./annex");
 
 module.exports = {
   Client,
@@ -16,4 +18,6 @@ module.exports = {
   Designer,
   Position,
   Kp,
+  Contract,
+  Annex,
 };

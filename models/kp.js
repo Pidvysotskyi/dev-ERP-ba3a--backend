@@ -86,12 +86,6 @@ class Kp {
     };
   }
 
-  // static async getAll() {
-  //   const { selectArray: sql } = this.baseQueries;
-  //   const [projects, _] = await db.execute(sql);
-  //   return projects;
-  // }
-
   static async getForProject(projectKey) {
     const { projectIn, client } = await Project.splitKey(projectKey);
 
@@ -127,6 +121,19 @@ class Kp {
   async add() {
     const id = await this.newId();
     const { projectIn, client } = await Project.splitKey(this.project);
+    const date = new Date();
+    const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
+    const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 
+                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
+                VALUES
+                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
+    await db.execute(sql);
+    return [id, this.project].join("-");
+  }
+
+  async update(key) {
+    const { kpIn, projectIn, client } = this.splitKey(key);
+
     const date = new Date();
     const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 

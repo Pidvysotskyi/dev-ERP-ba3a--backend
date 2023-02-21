@@ -7,6 +7,8 @@ const projects = require("./projects");
 const designer = require("./designer");
 const position = require("./position");
 const kp = require("./kp");
+const contracts = require("./contracts");
+const annexes = require("./annexes");
 
 module.exports = {
   auth,
@@ -18,4 +20,6 @@ module.exports = {
   designer,
   position,
   kp,
+  contracts,
+  annexes,
 };
