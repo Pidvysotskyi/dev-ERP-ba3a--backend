@@ -9,6 +9,7 @@ const positionRouter = require("./position");
 const kpRouter = require("./kp");
 const contractsRouter = require("./contracts");
 const annexesRouter = require("./annexes");
+const einfoRouter = require("./einfo");
 
 module.exports = {
   authRouter,
@@ -22,4 +23,5 @@ module.exports = {
   kpRouter,
   contractsRouter,
   annexesRouter,
+  einfoRouter,
 };

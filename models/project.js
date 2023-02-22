@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { splitProjectKey } = require("../modifiers");
 
 class Project {
   constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate }) {
@@ -69,15 +70,15 @@ class Project {
     return projects;
   }
 
-  static splitKey(key) {
-    const [projectIn, orgstructure, personaId] = key.split("-");
-    const client = [orgstructure, personaId].join("-");
+  // static splitKey(key) {
+  //   const [projectIn, orgstructure, personaId] = key.split("-");
+  //   const client = [orgstructure, personaId].join("-");
 
-    return {
-      projectIn,
-      client,
-    };
-  }
+  //   return {
+  //     projectIn,
+  //     client,
+  //   };
+  // }
 
   static async getAll() {
     const { selectArray: sql } = this.baseQueries;
@@ -104,7 +105,7 @@ class Project {
   }
 
   static async getByKey(key) {
-    const { projectIn, client } = this.splitKey(key);
+    const { projectIn, client } = splitProjectKey(key);
 
     const { selectProject } = this.baseQueries;
 
@@ -117,15 +118,15 @@ class Project {
     return result;
   }
 
-  static async delete(key) {
-    const { projectIn, client } = this.splitKey(key);
-    const sql = `DELETE FROM gdxem63mnchn3886.FA_PROJECT_T
-    WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
+  // static async delete(key) {
+  //   const { projectIn, client } = this.splitKey(key);
+  //   const sql = `DELETE FROM gdxem63mnchn3886.FA_PROJECT_T
+  //   WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
 
-    const [result, _] = await db.execute(sql);
+  //   const [result, _] = await db.execute(sql);
 
-    return result;
-  }
+  //   return result;
+  // }
 
   async add() {
     const id = await this.newId();

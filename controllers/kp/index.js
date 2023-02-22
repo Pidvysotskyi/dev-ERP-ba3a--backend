@@ -3,6 +3,7 @@ const getForProject = require("./getForProject");
 const deleteKp = require("./deleteKp");
 const addKp = require("./addKp");
 const uppdateKp = require("./updateKp");
+const updateNote = require("./updateNote");
 
 module.exports = {
   getKp,
@@ -10,4 +11,5 @@ module.exports = {
   deleteKp,
   addKp,
   uppdateKp,
+  updateNote,
 };

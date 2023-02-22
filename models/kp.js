@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const Project = require("../models/project");
+const { splitKpKey, splitProjectKey } = require("../modifiers");
 
 class Kp {
   constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote, userId }) {
@@ -75,19 +76,8 @@ class Kp {
     return kps;
   }
 
-  static splitKey(key) {
-    const [kpIn, projectIn, orgstructure, personaId] = key.split("-");
-    const client = [orgstructure, personaId].join("-");
-
-    return {
-      kpIn,
-      projectIn,
-      client,
-    };
-  }
-
   static async getForProject(projectKey) {
-    const { projectIn, client } = await Project.splitKey(projectKey);
+    const { projectIn, client } = splitProjectKey(projectKey);
 
     const sqlCondition = `WHERE kp.FA_PROJECT_IN = '${projectIn}' AND kp.DC_CLIENT_IN = '${client}'`;
     const result = await this.getSpecificArray(sqlCondition);
@@ -95,7 +85,7 @@ class Kp {
   }
 
   static async getByKey(key) {
-    const { kpIn, projectIn, client } = this.splitKey(key);
+    const { kpIn, projectIn, client } = splitKpKey(key);
 
     const { selectKp } = this.baseQueries;
 
@@ -108,41 +98,39 @@ class Kp {
     return result;
   }
 
-  static async delete(key) {
-    const { kpIn, projectIn, client } = this.splitKey(key);
-    const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
-    WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
-
-    const [result, _] = await db.execute(sql);
-
-    return result;
-  }
-
   async add() {
     const id = await this.newId();
-    const { projectIn, client } = await Project.splitKey(this.project);
-    const date = new Date();
-    const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
+    const { projectIn, client } = splitProjectKey(this.project);
+
     const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 
-                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
-                VALUES
-                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
+    (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
+    VALUES
+    ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', CURRENT_DATE(), '${this.finalDate}', CURRENT_DATE(), '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
     await db.execute(sql);
     return [id, this.project].join("-");
   }
 
-  async update(key) {
-    const { kpIn, projectIn, client } = this.splitKey(key);
+  async updateNote(key) {
+    const { kpIn, projectIn, client } = splitKpKey(key);
 
-    const date = new Date();
-    const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
-    const sql = `INSERT INTO gdxem63mnchn3886.GA_KP_T 
-                (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
-                VALUES
-                  ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', '${creationDate}', '${this.finalDate}', '${creationDate}', '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
+    const sql = `UPDATE gdxem63mnchn3886.GA_KP_T
+    SET GA_DATE_MODI = CURRENT_DATE(),
+    GA_MODIFIER = '${this.modifier}',
+    GA_NOTE_KP = '${this.kpNote}' 
+    WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
     await db.execute(sql);
-    return [id, this.project].join("-");
   }
+
+  // async update(key) {
+  //   const { kpIn, projectIn, client } = this.splitKey(key);
+
+  //   const sql = `UPDATE gdxem63mnchn3886.GA_KP_T
+  //   SET GA_DATE_MODI = CURRENT_DATE(),
+  //   GA_MODIFIER = '${this.modifier}',
+  //   GA_NOTE_KP = '${this.kpNote}'
+  //   WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+  //   await db.execute(sql);
+  // }
 }
 
 module.exports = Kp;

@@ -8,6 +8,7 @@ const Position = require("./position");
 const Kp = require("./kp");
 const Contract = require("./contract");
 const Annex = require("./annex");
+const Einfo = require("./einfo");
 
 module.exports = {
   Client,
@@ -20,4 +21,5 @@ module.exports = {
   Kp,
   Contract,
   Annex,
+  Einfo,
 };

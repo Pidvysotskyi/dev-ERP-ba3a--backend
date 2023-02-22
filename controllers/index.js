@@ -9,6 +9,7 @@ const position = require("./position");
 const kp = require("./kp");
 const contracts = require("./contracts");
 const annexes = require("./annexes");
+const einfo = require("./einfo");
 
 module.exports = {
   auth,
@@ -22,4 +23,5 @@ module.exports = {
   kp,
   contracts,
   annexes,
+  einfo,
 };
