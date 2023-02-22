@@ -1,6 +1,5 @@
 const db = require("../config/db");
-const Project = require("../models/project");
-const Kp = require("../models/kp");
+const { splitKpKey, splitProjectKey } = require("../modifiers");
 
 class Annex {
   constructor({ kpKey, userId, annexNumber, annexNote, docsArray }) {
@@ -34,7 +33,7 @@ class Annex {
   }
 
   static async getForProject(key) {
-    const { projectIn, client } = await Project.splitKey(key);
+    const { projectIn, client } = splitProjectKey(key);
 
     const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
     const result = await this.getSpecificArray(sqlCondition);
@@ -64,7 +63,7 @@ class Annex {
   //   }
 
   async add() {
-    const { kpIn, projectIn, client } = await Kp.splitKey(this.kp);
+    const { kpIn, projectIn, client } = splitKpKey(this.kp);
 
     const note = this.note ? JSON.stringify(this.note) : null;
 

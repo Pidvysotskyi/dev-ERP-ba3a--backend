@@ -1,5 +1,4 @@
 const db = require("../config/db");
-const Project = require("../models/project");
 const { splitKpKey, splitProjectKey } = require("../modifiers");
 
 class Kp {
@@ -54,7 +53,7 @@ class Kp {
   };
 
   async newId() {
-    const { projectIn, client } = await Project.splitKey(this.project);
+    const { projectIn, client } = splitProjectKey(this.project);
 
     const sql = `SELECT GA_KP_IN AS id
     FROM gdxem63mnchn3886.GA_KP_T

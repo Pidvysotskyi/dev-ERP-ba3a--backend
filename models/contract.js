@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const Project = require("../models/project");
+const { splitProjectKey } = require("../modifiers");
 
 class Contract {
   constructor({ projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray }) {
@@ -37,7 +37,7 @@ class Contract {
   }
 
   static async getForProject(key) {
-    const { projectIn, client } = await Project.splitKey(key);
+    const { projectIn, client } = splitProjectKey(key);
 
     const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
     const result = await this.getSpecificArray(sqlCondition);
@@ -56,18 +56,18 @@ class Contract {
     return result;
   }
 
-  static async delete(key) {
-    const { kpIn, projectIn, client } = this.splitKey(key);
-    const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
-    WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
+  // static async delete(key) {
+  //   const { kpIn, projectIn, client } = splitProjectKey(key);
+  //   const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
+  //   WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
 
-    const [result, _] = await db.execute(sql);
+  //   const [result, _] = await db.execute(sql);
 
-    return result;
-  }
+  //   return result;
+  // }
 
   async add() {
-    const { projectIn, client } = await Project.splitKey(this.project);
+    const { projectIn, client } = splitProjectKey(this.project);
 
     const note = this.note ? JSON.stringify(this.note) : null;
     const deadline = this.deadline ? JSON.stringify(this.deadline) : null;

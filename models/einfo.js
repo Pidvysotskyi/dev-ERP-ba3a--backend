@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const Project = require("../models/project");
+const { splitProjectKey } = require("../modifiers");
 
 class Einfo {
   constructor({ projectKey, orgStructureId, userId, einfoNote, docsArray }) {
@@ -33,7 +33,7 @@ class Einfo {
   }
 
   static async getForProject(key) {
-    const { projectIn, client } = await Project.splitKey(key);
+    const { projectIn, client } = splitProjectKey(key);
 
     const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
     const result = await this.getSpecificArray(sqlCondition);
@@ -63,7 +63,7 @@ class Einfo {
   // }
 
   async add() {
-    const { projectIn, client } = await Project.splitKey(this.project);
+    const { projectIn, client } = splitProjectKey(this.project);
 
     const sql = `INSERT INTO gdxem63mnchn3886.LE_E_INFO_T 
     (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LE_NAME_NOTE, DA_EMPLOYEE_ID, LE_DATE_CREATION, LE_MODIFIER, LE_DATE_MODI, LE_PATH_E_INFO) 
