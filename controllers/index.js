@@ -10,6 +10,7 @@ const kp = require("./kp");
 const contracts = require("./contracts");
 const annexes = require("./annexes");
 const einfo = require("./einfo");
+const todo = require("./todo");
 
 module.exports = {
   auth,
@@ -24,4 +25,5 @@ module.exports = {
   contracts,
   annexes,
   einfo,
+  todo,
 };

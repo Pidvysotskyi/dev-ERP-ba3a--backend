@@ -23,7 +23,7 @@ class Kp {
             dis.DD_DESIGNER_NAME AS "designerName",
             kp.GA_AGENT_BONUS AS "designerBonus",
             kp.GA_NOTE_KP AS "kpNote",
-            kp.GA_DATE_CREATION AS "creationDate",
+            kp.GA_DATE_START AS "startDate",
             kp.GA_DATE_FIN AS "finalDate",
             kp.EA_ORG_STRUCTURE_IN  AS "orgStructureId",
             org.EA_FULL_NAME_ORG AS "orgName"
@@ -41,7 +41,7 @@ class Kp {
             kp.DA_EMPLOYEE_ID AS "managerKpId",
             emp.DA_EMPLOYEE_NAME AS "managerKpName",
             kp.GA_NOTE_KP AS "kpNote",
-            kp.GA_DATE_CREATION AS "creationDate",
+            kp.GA_DATE_START AS "startDate",
             kp.GA_DATE_FIN AS "finalDate"
             FROM gdxem63mnchn3886.GA_KP_T kp
             LEFT JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
@@ -120,16 +120,22 @@ class Kp {
     await db.execute(sql);
   }
 
-  // async update(key) {
-  //   const { kpIn, projectIn, client } = this.splitKey(key);
+  async update(key) {
+    const { kpIn, projectIn, client } = splitKpKey(key);
 
-  //   const sql = `UPDATE gdxem63mnchn3886.GA_KP_T
-  //   SET GA_DATE_MODI = CURRENT_DATE(),
-  //   GA_MODIFIER = '${this.modifier}',
-  //   GA_NOTE_KP = '${this.kpNote}'
-  //   WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
-  //   await db.execute(sql);
-  // }
+    const sql = `UPDATE gdxem63mnchn3886.GA_KP_T
+    SET GA_DATE_MODI = CURRENT_DATE(),
+    EA_ORG_STRUCTURE_IN = '${this.orgStructureId}',
+    DA_EMPLOYEE_ID = '${this.managerKp}',
+    DD_DESIGNER_ID = '${this.designer}',
+    GA_AGENT_BONUS = '${this.designerBonus}',
+    GA_DATE_START = '${this.startDate}',
+    GA_DATE_FIN = '${this.finalDate}',
+    GA_MODIFIER = '${this.modifier}',
+    GA_NOTE_KP = '${this.kpNote}'
+    WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+    await db.execute(sql);
+  }
 }
 
 module.exports = Kp;

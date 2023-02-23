@@ -1,24 +1,17 @@
-const { Project, Kp, OrgStructure } = require("../../models");
+const { Kp } = require("../../models");
 const { Conflict } = require("http-errors");
 
 const uppdateKp = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote } = req.body;
+  const { kpKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote } = req.body;
 
-  const project = await Project.getByKey(projectKey);
+  const kp = await Kp.getByKey(kpKey);
 
-  if (!project) {
-    throw new Conflict(`Cannot find the Project ${projectKey}`);
+  if (!kp) {
+    throw new Conflict(`Cannot find the Kp ${kpKey}`);
   }
 
-  const orgStructure = await OrgStructure.getById(orgStructureId);
-
-  if (!orgStructure) {
-    throw new Conflict(`Cannot find the Organisation with id:${orgStructureId}`);
-  }
-
-  const projectInfo = {
-    projectKey,
+  const kpParams = {
     managerKpId,
     orgStructureId,
     designerId,
@@ -29,15 +22,15 @@ const uppdateKp = async (req, res, next) => {
     userId,
   };
 
-  const newKp = new Kp(projectInfo);
+  const newKp = new Kp(kpParams);
 
-  const key = await newKp.add();
+  await newKp.update(kpKey);
 
-  const addedKP = await Kp.getByKey(key);
+  const updatedKp = await Kp.getByKey(kpKey);
 
   res.status(201).json({
-    message: `Kp ${key} Created`,
-    kp: addedKP,
+    message: `Kp ${kpKey} Updated`,
+    kp: updatedKp,
   });
 };
 

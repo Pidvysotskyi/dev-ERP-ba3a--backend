@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post("/add", auth, ctrlWrapper(ctrl.addKp));
 router.patch("/updateNote", auth, ctrlWrapper(ctrl.updateNote));
+router.patch("/update", auth, ctrlWrapper(ctrl.uppdateKp));
 router.get("/get/:kpKey", auth, ctrlWrapper(ctrl.getKp));
 // router.get("/getAll", auth, ctrlWrapper(ctrl.getAll));
 router.get("/getForProject/:projectKey", auth, ctrlWrapper(ctrl.getForProject));

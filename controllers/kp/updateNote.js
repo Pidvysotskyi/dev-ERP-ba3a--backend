@@ -21,8 +21,6 @@ const updateNote = async (req, res, next) => {
 
   await newKp.updateNote(kpKey);
 
-  console.log("KP updated");
-
   const updatedKp = await Kp.getByKey(kpKey);
 
   res.status(201).json({

@@ -16,6 +16,7 @@ const {
   contractsRouter,
   annexesRouter,
   einfoRouter,
+  todoRouter,
 } = require("./routes/api/");
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/kp", kpRouter);
 app.use("/contracts", contractsRouter);
 app.use("/annexes", annexesRouter);
 app.use("/einfo", einfoRouter);
+app.use("/todo", todoRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });

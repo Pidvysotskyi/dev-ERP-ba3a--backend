@@ -2,25 +2,26 @@ const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
 class Einfo {
-  constructor({ projectKey, orgStructureId, userId, einfoNote, docsArray }) {
+  constructor({ projectKey, orgStructureId, userId, einfoNote, docsArray, dateFrom }) {
     this.user = userId;
     this.project = projectKey;
     this.orgStructure = orgStructureId;
     this.note = einfoNote;
     this.docsArray = docsArray;
+    this.dateFrom = dateFrom;
   }
 
   static baseQueries = {
     selectEinfo: `SELECT
                 LE_E_INFO_ID as 'einfoId',
                 LE_NAME_NOTE as 'einfoNote',
-                LE_DATE_CREATION as 'einfoCreationDate',
+                LE_DATE_FROM as 'dateFrom',
                 LE_PATH_E_INFO as 'docsArray'
                 FROM gdxem63mnchn3886.LE_E_INFO_T`,
     selectArray: `SELECT
                 LE_E_INFO_ID as 'einfoId',
                 LE_NAME_NOTE as 'einfoNote',
-                LE_DATE_CREATION as 'einfoCreationDate',
+                LE_DATE_FROM as 'dateFrom',
                 LE_PATH_E_INFO as 'docsArray'
                 FROM gdxem63mnchn3886.LE_E_INFO_T`,
   };
@@ -66,9 +67,9 @@ class Einfo {
     const { projectIn, client } = splitProjectKey(this.project);
 
     const sql = `INSERT INTO gdxem63mnchn3886.LE_E_INFO_T 
-    (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LE_NAME_NOTE, DA_EMPLOYEE_ID, LE_DATE_CREATION, LE_MODIFIER, LE_DATE_MODI, LE_PATH_E_INFO) 
+    (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LE_NAME_NOTE, DA_EMPLOYEE_ID, LE_DATE_CREATION, LE_MODIFIER, LE_DATE_MODI, LE_PATH_E_INFO, LE_DATE_FROM) 
     VALUES 
-    ('${projectIn}', '${this.orgStructure}', '${client}', '${this.note}', '${this.user}', CURRENT_DATE(), '${this.user}', CURRENT_DATE(), '${this.docsArray}')`;
+    ('${projectIn}', '${this.orgStructure}', '${client}', '${this.note}', '${this.user}', CURRENT_DATE(), '${this.user}', CURRENT_DATE(), '${this.docsArray}', '${this.dateFrom}')`;
     const [result, _] = await db.execute(sql);
     return result.insertId;
   }
@@ -77,7 +78,8 @@ class Einfo {
     const sql = `UPDATE gdxem63mnchn3886.LE_E_INFO_T SET 
     LE_NAME_NOTE = '${this.note}', 
     LE_MODIFIER = '${this.user}', 
-    LE_DATE_MODI = CURRENT_DATE(), 
+    LE_DATE_MODI = CURRENT_DATE(),
+    LE_DATE_FROM = '${this.dateFrom}',
     LE_PATH_E_INFO = '${this.docsArray}'
     WHERE (LE_E_INFO_ID = '${id}')`;
     const result = await db.execute(sql);

@@ -5,7 +5,7 @@ const screenshotsDir = path.join(__dirname, "../", "../", "storage", "screenshot
 
 const addEinfo = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { projectKey, einfoNote } = req.body;
+  const { projectKey, einfoNote, dateFrom } = req.body;
 
   const { orgStructureId } = await Project.getByKey(projectKey);
 
@@ -28,7 +28,7 @@ const addEinfo = async (req, res, next) => {
 
   const docsArray = JSON.stringify(screenshots);
 
-  const einfoParams = { projectKey, orgStructureId, userId, einfoNote, docsArray };
+  const einfoParams = { projectKey, orgStructureId, userId, einfoNote, docsArray, dateFrom };
 
   const newEinfo = new Einfo(einfoParams);
 

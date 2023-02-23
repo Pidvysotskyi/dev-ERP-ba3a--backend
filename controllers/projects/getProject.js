@@ -1,4 +1,4 @@
-const { Project, Contract, Kp, Annex, Einfo } = require("../../models");
+const { Project, Contract, Kp, Annex, Einfo, Todo } = require("../../models");
 
 const getProject = async (req, res, next) => {
   const { projectKey } = req.params;
@@ -12,7 +12,9 @@ const getProject = async (req, res, next) => {
 
   const einfo = await Einfo.getForProject(projectKey);
 
-  res.status(200).json({ project, contracts, kps, annexes, einfo });
+  const todoList = await Todo.getForProject(projectKey);
+
+  res.status(200).json({ project, contracts, kps, annexes, einfo, todoList });
 };
 
 module.exports = getProject;
