@@ -7,7 +7,7 @@ const editEinfo = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
   const { einfoId, einfoNote, dateFrom } = req.body;
 
-  const { docsArray: screenshots } = Einfo.getByid(einfoId);
+  const { docsArray: screenshots } = await Einfo.getByid(einfoId);
 
   if (req.files) {
     const screenshotUrls = await Promise.all(
