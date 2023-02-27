@@ -5,7 +5,7 @@ const annexesDir = path.join(__dirname, "../", "../", "storage", "annexes");
 
 const addAnnex = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { kpKey, annexNumber, annexNote } = req.body;
+  const { kpKey, annexNumber, annexNote, budget } = req.body;
 
   const annexes = [];
 
@@ -26,7 +26,7 @@ const addAnnex = async (req, res, next) => {
 
   const docsArray = JSON.stringify(annexes);
 
-  const annexParams = { kpKey, userId, annexNumber, annexNote, docsArray };
+  const annexParams = { kpKey, userId, annexNumber, annexNote, docsArray, budget };
 
   const newAnnex = new Annex(annexParams);
 

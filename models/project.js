@@ -2,7 +2,7 @@ const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
 class Project {
-  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate }) {
+  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate, status = "opened" }) {
     this.client = clientId;
     this.user = userId;
     this.orgStructureId = orgStructureId;
@@ -10,6 +10,7 @@ class Project {
     this.designNumber = designNumber;
     this.projectAdress = projectAdress;
     this.finalDate = finalDate;
+    this.status = status;
   }
 
   static baseQueries = {
@@ -70,16 +71,6 @@ class Project {
     return projects;
   }
 
-  // static splitKey(key) {
-  //   const [projectIn, orgstructure, personaId] = key.split("-");
-  //   const client = [orgstructure, personaId].join("-");
-
-  //   return {
-  //     projectIn,
-  //     client,
-  //   };
-  // }
-
   static async getAll() {
     const { selectArray: sql } = this.baseQueries;
     const [projects, _] = await db.execute(sql);
@@ -118,25 +109,38 @@ class Project {
     return result;
   }
 
-  // static async delete(key) {
-  //   const { projectIn, client } = this.splitKey(key);
-  //   const sql = `DELETE FROM gdxem63mnchn3886.FA_PROJECT_T
-  //   WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = "${client}"`;
-
-  //   const [result, _] = await db.execute(sql);
-
-  //   return result;
-  // }
-
   async add() {
     const id = await this.newId();
-    const date = new Date();
-    const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const sql = `INSERT INTO gdxem63mnchn3886.FA_PROJECT_T
-(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN)
-VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', '${creationDate}', '${creationDate}', '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}')`;
+(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN, FA_PROJECT_STATUS)
+VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURRENT_DATE(), CURRENT_DATE(), '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}', '${this.status}')`;
     await db.execute(sql);
     return [id, this.client].join("-");
+  }
+
+  async changeStatus(projectKey) {
+    const { projectIn, client } = splitProjectKey(projectKey);
+    const sql = `UPDATE gdxem63mnchn3886.FA_PROJECT_T
+    SET
+    FA_PROJECT_STATUS = '${this.status}',
+    FA_MODIFIER = '${this.user}',
+    FA_DATE_MODI = CURRENT_DATE()
+    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+    await db.execute(sql);
+  }
+
+  async update(projectKey) {
+    const { projectIn, client } = splitProjectKey(projectKey);
+    const sql = `UPDATE gdxem63mnchn3886.FA_PROJECT_T
+    SET 
+    DD_DESIGNER_ID = '${this.designer}',
+    FA_DESIGN_NUM_IN = '${this.designNumber}', 
+    FA_PROJECT_ADRESS = '${this.projectAdress}',
+    FA_DATE_FIN = '${this.finalDate}',
+    FA_DATE_MODI = CURRENT_DATE(),
+    FA_MODIFIER = '${this.user}'
+    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+    await db.execute(sql);
   }
 }
 

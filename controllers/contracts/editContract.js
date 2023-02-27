@@ -5,9 +5,9 @@ const contractsDir = path.join(__dirname, "../", "../", "storage", "contracts");
 
 const editContract = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { contractId, contractNumber, contractNote, contractDeadline } = req.body;
+  const { contractId, contractNumber, contractNote, contractDeadline, budget } = req.body;
 
-  const contracts = [];
+  const { docsArray: contracts } = await Contract.getByid(contractId);
 
   if (req.files) {
     const contractUrls = await Promise.all(
@@ -26,7 +26,7 @@ const editContract = async (req, res, next) => {
 
   const docsArray = JSON.stringify(contracts);
 
-  const contractParams = { userId, contractNumber, contractNote, contractDeadline, docsArray };
+  const contractParams = { userId, contractNumber, contractNote, contractDeadline, docsArray, budget };
 
   const updatedContract = new Contract(contractParams);
 

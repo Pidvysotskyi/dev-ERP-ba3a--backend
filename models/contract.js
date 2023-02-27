@@ -2,7 +2,7 @@ const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
 class Contract {
-  constructor({ projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray }) {
+  constructor({ projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray, budget }) {
     this.user = userId;
     this.project = projectKey;
     this.orgStructure = orgStructureId;
@@ -10,21 +10,26 @@ class Contract {
     this.note = contractNote;
     this.deadline = contractDeadline;
     this.docsArray = docsArray;
+    this.budget = budget;
   }
 
   static baseQueries = {
-    selectContract: `SELECT 
+    selectContract: `SELECT
+            CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "project",
             LA_CONTRACT_ID as 'contractId',
             LA_NAME_CONTRACT as 'contractNumber',
             LA_NOTE as 'contractNote',
             LA_PROJECT_TIMELINE as 'contractDeadline',
+            LA_PROJECT_AMOUNT as 'budget',
             LA_PATH_CONTRACT as 'docsArray'
             FROM gdxem63mnchn3886.LA_CONTRACT_T`,
-    selectArray: `SELECT 
+    selectArray: `SELECT
+            CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "project",
             LA_CONTRACT_ID as 'contractId',
             LA_NAME_CONTRACT as 'contractNumber',
             LA_NOTE as 'contractNote',
             LA_PROJECT_TIMELINE as 'contractDeadline',
+            LA_PROJECT_AMOUNT as 'budget',
             LA_PATH_CONTRACT as 'docsArray'
             FROM gdxem63mnchn3886.LA_CONTRACT_T`,
   };
@@ -56,16 +61,6 @@ class Contract {
     return result;
   }
 
-  // static async delete(key) {
-  //   const { kpIn, projectIn, client } = splitProjectKey(key);
-  //   const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
-  //   WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
-
-  //   const [result, _] = await db.execute(sql);
-
-  //   return result;
-  // }
-
   async add() {
     const { projectIn, client } = splitProjectKey(this.project);
 
@@ -73,9 +68,9 @@ class Contract {
     const deadline = this.deadline ? JSON.stringify(this.deadline) : null;
 
     const sql = `INSERT IGNORE INTO gdxem63mnchn3886.LA_CONTRACT_T
-                (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LA_NAME_CONTRACT, DA_EMPLOYEE_ID, LA_DATE_CREATION, LA_NOTE, LA_PROJECT_TIMELINE, LA_MODIFIER, LA_DATE_MODI, LA_PATH_CONTRACT)
+                (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LA_NAME_CONTRACT, DA_EMPLOYEE_ID, LA_DATE_CREATION, LA_NOTE, LA_PROJECT_TIMELINE, LA_MODIFIER, LA_DATE_MODI, LA_PATH_CONTRACT, LA_PROJECT_AMOUNT)
                 VALUES
-                ('${projectIn}', '${this.orgStructure}', '${client}', '${this.contractName}', '${this.user}', CURRENT_DATE(), ${note}, ${deadline}, '${this.user}', CURRENT_DATE(), '${this.docsArray}')`;
+                ('${projectIn}', '${this.orgStructure}', '${client}', '${this.contractName}', '${this.user}', CURRENT_DATE(), ${note}, ${deadline}, '${this.user}', CURRENT_DATE(), '${this.docsArray}' , '${this.budget}')`;
     const [result, _] = await db.execute(sql);
     return result.insertId;
   }
@@ -91,6 +86,7 @@ class Contract {
     LA_PROJECT_TIMELINE = ${deadline},
     LA_MODIFIER = '${this.user}',
     LA_DATE_MODI = CURRENT_DATE(),
+    LA_PROJECT_AMOUNT = '${this.budget}',
     LA_PATH_CONTRACT = '${this.docsArray}'
     WHERE LA_CONTRACT_ID = '${id}'`;
     const result = await db.execute(sql);

@@ -5,7 +5,7 @@ const contractsDir = path.join(__dirname, "../", "../", "storage", "contracts");
 
 const addContract = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { projectKey, contractNumber, contractNote, contractDeadline } = req.body;
+  const { projectKey, contractNumber, contractNote, contractDeadline, budget } = req.body;
 
   const { orgStructureId } = await Project.getByKey(projectKey);
 
@@ -28,7 +28,7 @@ const addContract = async (req, res, next) => {
 
   const docsArray = JSON.stringify(contracts);
 
-  const contractParams = { projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray };
+  const contractParams = { projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray, budget };
 
   const newContract = new Contract(contractParams);
 

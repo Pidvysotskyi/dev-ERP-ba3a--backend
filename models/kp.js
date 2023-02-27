@@ -136,6 +136,17 @@ class Kp {
     WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
     await db.execute(sql);
   }
+
+  async changeStatus(key) {
+    const { kpIn, projectIn, client } = splitKpKey(key);
+    const sql = `UPDATE ggdxem63mnchn3886.GA_KP_T 
+    SET 
+    GA_DATE_MODI = CURRENT_DATE()', 
+    GA_MODIFIER = '${this.user}'
+    GA_KP_STATUS = '${this.status}'
+    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') and (GA_KP_IN = '${kpIn}')`;
+    await db.execute(sql);
+  }
 }
 
 module.exports = Kp;

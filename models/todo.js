@@ -67,7 +67,7 @@ class Todo {
     const sql = `INSERT INTO gdxem63mnchn3886.FB_TO_DO_PROJECT_T
     (FA_PROJECT_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FB_NOTE_PROJECT, FB_DATE_CREATION, FB_DATE_D_DAY, FB_MODIFIER, FB_DATE_MODI)
     VALUES 
-    ('${projectIn}', '${client}', '${this.user}', '${this.note}', CURRENT_DATE(), '2023-03-07', '${this.user}', CURRENT_DATE())`;
+    ('${projectIn}', '${client}', '${this.user}', '${this.note}', CURRENT_DATE(), '${this.dueDate}', '${this.user}', CURRENT_DATE())`;
     const [result, _] = await db.execute(sql);
     return result.insertId;
   }

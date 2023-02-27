@@ -6,6 +6,8 @@ const getforUser = require("./getForUser");
 const getforOrg = require("./getForOrg");
 const deleteProject = require("./deleteProject");
 const getforCurrent = require("./getForCurrent");
+const changeStatus = require("./changeStatus");
+const updateProject = require("./updateProject");
 
 module.exports = {
   getAll,
@@ -16,4 +18,6 @@ module.exports = {
   getforOrg,
   deleteProject,
   getforCurrent,
+  changeStatus,
+  updateProject,
 };

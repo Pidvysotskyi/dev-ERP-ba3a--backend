@@ -5,9 +5,9 @@ const annexesDir = path.join(__dirname, "../", "../", "storage", "annexes");
 
 const editAnnex = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { annexId, annexNumber, annexNote } = req.body;
+  const { annexId, annexNumber, annexNote, budget } = req.body;
 
-  const annexes = [];
+  const { docsArray: annexes } = await Annex.getByid(annexId);
 
   if (req.files) {
     const annexUrls = await Promise.all(
@@ -26,7 +26,7 @@ const editAnnex = async (req, res, next) => {
 
   const docsArray = JSON.stringify(annexes);
 
-  const annexParams = { userId, annexNumber, annexNote, docsArray };
+  const annexParams = { userId, annexNumber, annexNote, docsArray, budget };
 
   const updatedContract = new Annex(annexParams);
 
