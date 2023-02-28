@@ -1,6 +1,8 @@
 const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
+const { todoTableName: tableName } = require("./sqlTableNames");
+
 class Todo {
   constructor({ projectKey, dueDate, userId, todoNote }) {
     this.user = userId;
@@ -15,13 +17,13 @@ class Todo {
     FB_NOTE_PROJECT as 'todoNote',
     FB_DATE_CREATION as 'creationDate',
     FB_DATE_D_DAY as 'dueDate'
-    FROM gdxem63mnchn3886.FB_TO_DO_PROJECT_T`,
+    FROM ${tableName}`,
     selectArray: `SELECT
     FB_TO_DO_PROJECT_ID as 'todoId',
     FB_NOTE_PROJECT as 'todoNote',
     FB_DATE_CREATION as 'creationDate',
     FB_DATE_D_DAY as 'dueDate'
-    FROM gdxem63mnchn3886.FB_TO_DO_PROJECT_T`,
+    FROM ${tableName}`,
   };
 
   static async getSpecificArray(sqlCondition) {
@@ -64,7 +66,7 @@ class Todo {
   async add() {
     const { projectIn, client } = splitProjectKey(this.project);
 
-    const sql = `INSERT INTO gdxem63mnchn3886.FB_TO_DO_PROJECT_T
+    const sql = `INSERT INTO ${tableName}
     (FA_PROJECT_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FB_NOTE_PROJECT, FB_DATE_CREATION, FB_DATE_D_DAY, FB_MODIFIER, FB_DATE_MODI)
     VALUES 
     ('${projectIn}', '${client}', '${this.user}', '${this.note}', CURRENT_DATE(), '${this.dueDate}', '${this.user}', CURRENT_DATE())`;
@@ -73,7 +75,7 @@ class Todo {
   }
 
   async update(id) {
-    const sql = `UPDATE gdxem63mnchn3886.FB_TO_DO_PROJECT_T
+    const sql = `UPDATE ${tableName}
     SET
     FB_NOTE_PROJECT = '${this.note}',
     FB_MODIFIER = '${this.user}',

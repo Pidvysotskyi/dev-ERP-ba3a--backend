@@ -1,8 +1,10 @@
 const db = require("../config/db");
 
+const { orgStructureTableName: tableName } = require("./sqlTableNames");
+
 class OrgStructure {
   static async getAll() {
-    const sql = "SELECT * FROM gdxem63mnchn3886.EA_ORG_STRUCTURE_T";
+    const sql = `SELECT * FROM ${tableName}`;
 
     const [result, _] = await db.execute(sql);
 
@@ -10,7 +12,7 @@ class OrgStructure {
   }
 
   static async getById(ID) {
-    const sql = `SELECT * FROM gdxem63mnchn3886.EA_ORG_STRUCTURE_T WHERE EA_ORG_STRUCTURE_IN = '${ID}'`;
+    const sql = `SELECT * FROM ${tableName} WHERE EA_ORG_STRUCTURE_IN = '${ID}'`;
 
     const [[result], _] = await db.execute(sql);
 
@@ -18,7 +20,7 @@ class OrgStructure {
   }
 
   static async getShortNameById(ID) {
-    const sql = `SELECT EA_SHORT_NAME_ORG AS shortName FROM gdxem63mnchn3886.EA_ORG_STRUCTURE_T WHERE EA_ORG_STRUCTURE_IN = '${ID}'`;
+    const sql = `SELECT EA_SHORT_NAME_ORG AS shortName FROM ${tableName} WHERE EA_ORG_STRUCTURE_IN = '${ID}'`;
 
     const [[result], _] = await db.execute(sql);
 

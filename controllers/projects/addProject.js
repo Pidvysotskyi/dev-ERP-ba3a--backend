@@ -25,6 +25,7 @@ const addProject = async (req, res, next) => {
     designNumber,
     projectAdress,
     finalDate,
+    status: "Активний",
   };
 
   console.log(designerId);

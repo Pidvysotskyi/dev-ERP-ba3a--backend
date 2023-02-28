@@ -13,7 +13,6 @@ router.get("/getForClient/:clientId", auth, ctrlWrapper(ctrl.getforClient));
 router.get("/getForUser/:userId", auth, ctrlWrapper(ctrl.getforUser));
 router.get("/getForCurrent", auth, ctrlWrapper(ctrl.getforCurrent));
 router.get("/getForOrg/:orgStructureId", auth, ctrlWrapper(ctrl.getforOrg));
-router.delete("/delete/:projectKey", auth, ctrlWrapper(ctrl.deleteProject));
 router.put("/changeStatus", auth, ctrlWrapper(ctrl.changeStatus));
 router.patch("/update", auth, ctrlWrapper(ctrl.updateProject));
 

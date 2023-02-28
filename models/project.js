@@ -1,8 +1,18 @@
 const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
+const { projectTableName: tableName, orgStructureTableName, userTableName, designerTableName } = require("./sqlTableNames");
+
+const getPesonalCondition = projectKey => {
+  const { projectIn, client } = splitProjectKey(projectKey);
+
+  const personalCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
+
+  return personalCondition;
+};
+
 class Project {
-  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate, status = "opened" }) {
+  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate, status }) {
     this.client = clientId;
     this.user = userId;
     this.orgStructureId = orgStructureId;
@@ -30,12 +40,12 @@ class Project {
             pro.FA_PROJECT_STATUS AS "projectStatus",
             pro.FA_DATE_CREATION AS "creationDate",
             pro.FA_DATE_FIN AS "finalDate"
-            FROM gdxem63mnchn3886.FA_PROJECT_T pro
-            LEFT JOIN gdxem63mnchn3886.EA_ORG_STRUCTURE_T org
+            FROM ${tableName} pro
+            LEFT JOIN ${orgStructureTableName} org
             ON pro.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN
-            LEFT JOIN gdxem63mnchn3886.DA_EMPLOYEE_T emp
+            LEFT JOIN ${userTableName} emp
             ON pro.DA_EMPLOYEE_ID = emp.DA_EMPLOYEE_ID
-            LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
+            LEFT JOIN ${designerTableName} dis
             ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID`,
     selectArray: `SELECT
             CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "projectKey",
@@ -45,24 +55,10 @@ class Project {
             pro.FA_DATE_CREATION  AS "creationDate",
             pro.FA_DATE_FIN AS "finalDate",
             pro.FA_PROJECT_STATUS AS "projectStatus"
-            FROM gdxem63mnchn3886.FA_PROJECT_T pro
-            LEFT JOIN gdxem63mnchn3886.DD_DESIGNER_T dis
+            FROM ${tableName} pro
+            LEFT JOIN ${designerTableName} dis
             ON pro.DD_DESIGNER_ID = dis.DD_DESIGNER_ID`,
   };
-
-  async newId() {
-    const sql = `SELECT FA_PROJECT_IN AS id
-    FROM gdxem63mnchn3886.FA_PROJECT_T
-    WHERE DC_CLIENT_IN = "${this.client}"`;
-
-    const [ids, _] = await db.execute(sql);
-
-    const idArray = ids.map(item => item.id);
-
-    const result = idArray.length === 0 ? 1 : Math.max(...idArray) + 1;
-
-    return result;
-  }
 
   static async getSpecificArray(sqlCondition) {
     const { selectArray } = this.baseQueries;
@@ -95,23 +91,35 @@ class Project {
     return result;
   }
 
-  static async getByKey(key) {
-    const { projectIn, client } = splitProjectKey(key);
+  static async getByKey(projectKey) {
+    const personalCondition = getPesonalCondition(projectKey);
 
     const { selectProject } = this.baseQueries;
 
-    const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
-
-    const sql = [selectProject, sqlCondition].join(" ");
+    const sql = [selectProject, personalCondition].join(" ");
 
     const [[result], _] = await db.execute(sql);
 
     return result;
   }
 
+  async newId() {
+    const sql = `SELECT FA_PROJECT_IN AS id
+    FROM ${tableName}
+    WHERE DC_CLIENT_IN = "${this.client}"`;
+
+    const [ids, _] = await db.execute(sql);
+
+    const idArray = ids.map(item => item.id);
+
+    const result = idArray.length === 0 ? 1 : Math.max(...idArray) + 1;
+
+    return result;
+  }
+
   async add() {
     const id = await this.newId();
-    const sql = `INSERT INTO gdxem63mnchn3886.FA_PROJECT_T
+    const sql = `INSERT INTO ${tableName}
 (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN, FA_PROJECT_STATUS)
 VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURRENT_DATE(), CURRENT_DATE(), '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}', '${this.status}')`;
     await db.execute(sql);
@@ -119,19 +127,20 @@ VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURR
   }
 
   async changeStatus(projectKey) {
-    const { projectIn, client } = splitProjectKey(projectKey);
-    const sql = `UPDATE gdxem63mnchn3886.FA_PROJECT_T
+    const personalCondition = getPesonalCondition(projectKey);
+    const sql = `UPDATE ${tableName}
     SET
     FA_PROJECT_STATUS = '${this.status}',
     FA_MODIFIER = '${this.user}',
     FA_DATE_MODI = CURRENT_DATE()
-    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+    ${personalCondition}`;
     await db.execute(sql);
   }
 
   async update(projectKey) {
-    const { projectIn, client } = splitProjectKey(projectKey);
-    const sql = `UPDATE gdxem63mnchn3886.FA_PROJECT_T
+    const personalCondition = getPesonalCondition(projectKey);
+
+    const sql = `UPDATE ${tableName}
     SET 
     DD_DESIGNER_ID = '${this.designer}',
     FA_DESIGN_NUM_IN = '${this.designNumber}', 
@@ -139,7 +148,7 @@ VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURR
     FA_DATE_FIN = '${this.finalDate}',
     FA_DATE_MODI = CURRENT_DATE(),
     FA_MODIFIER = '${this.user}'
-    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
+    ${personalCondition}`;
     await db.execute(sql);
   }
 }

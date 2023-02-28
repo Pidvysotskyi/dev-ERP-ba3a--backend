@@ -1,6 +1,8 @@
 const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
+const { contractTableName: tableName } = require("./sqlTableNames");
+
 class Contract {
   constructor({ projectKey, orgStructureId, userId, contractNumber, contractNote, contractDeadline, docsArray, budget }) {
     this.user = userId;
@@ -22,7 +24,7 @@ class Contract {
             LA_PROJECT_TIMELINE as 'contractDeadline',
             LA_PROJECT_AMOUNT as 'budget',
             LA_PATH_CONTRACT as 'docsArray'
-            FROM gdxem63mnchn3886.LA_CONTRACT_T`,
+            FROM ${tableName}`,
     selectArray: `SELECT
             CONCAT(FA_PROJECT_IN, "-", DC_CLIENT_IN) AS "project",
             LA_CONTRACT_ID as 'contractId',
@@ -31,7 +33,7 @@ class Contract {
             LA_PROJECT_TIMELINE as 'contractDeadline',
             LA_PROJECT_AMOUNT as 'budget',
             LA_PATH_CONTRACT as 'docsArray'
-            FROM gdxem63mnchn3886.LA_CONTRACT_T`,
+            FROM ${tableName}`,
   };
 
   static async getSpecificArray(sqlCondition) {
@@ -67,7 +69,7 @@ class Contract {
     const note = this.note ? JSON.stringify(this.note) : null;
     const deadline = this.deadline ? JSON.stringify(this.deadline) : null;
 
-    const sql = `INSERT IGNORE INTO gdxem63mnchn3886.LA_CONTRACT_T
+    const sql = `INSERT INTO ${tableName}
                 (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LA_NAME_CONTRACT, DA_EMPLOYEE_ID, LA_DATE_CREATION, LA_NOTE, LA_PROJECT_TIMELINE, LA_MODIFIER, LA_DATE_MODI, LA_PATH_CONTRACT, LA_PROJECT_AMOUNT)
                 VALUES
                 ('${projectIn}', '${this.orgStructure}', '${client}', '${this.contractName}', '${this.user}', CURRENT_DATE(), ${note}, ${deadline}, '${this.user}', CURRENT_DATE(), '${this.docsArray}' , '${this.budget}')`;
@@ -79,7 +81,7 @@ class Contract {
     const note = this.note ? JSON.stringify(this.note) : null;
     const deadline = this.deadline ? JSON.stringify(this.deadline) : null;
 
-    const sql = `UPDATE gdxem63mnchn3886.LA_CONTRACT_T
+    const sql = `UPDATE ${tableName}
     SET
     LA_NAME_CONTRACT = '${this.contractName}',
     LA_NOTE = ${note},

@@ -1,5 +1,7 @@
 const db = require("../config/db");
 
+const { positionTableName: tableName } = require("./sqlTableNames");
+
 class Position {
   //   constructor({  }) {
 
@@ -9,7 +11,7 @@ class Position {
     const sql = `SELECT
     EE_EMPLOYEE_POSITION_ID AS "positionId",
     EE_NAME_POSITION AS "positionName"
-    FROM gdxem63mnchn3886.EE_EMPLOYEE_TYPE_T`;
+    FROM ${tableName}`;
 
     const [result, _] = await db.execute(sql);
 

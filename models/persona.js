@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const { transliteration } = require("../modifiers");
+const { personaTableName: tableName } = require("./sqlTableNames");
 
 class Persona {
   constructor({ firstName, lastName, patronym, creatorId }) {
@@ -11,7 +12,7 @@ class Persona {
   }
 
   static async getAll() {
-    const sql = `SELECT * FROM gdxem63mnchn3886.CA_PERSONA_T`;
+    const sql = `SELECT * FROM ${tableName}`;
 
     const [result, _] = await db.execute(sql);
 
@@ -19,7 +20,7 @@ class Persona {
   }
 
   static async getById(ID) {
-    const sql = `SELECT * FROM gdxem63mnchn3886.CA_PERSONA_T WHERE CA_PERSONA_ID = '${ID}'`;
+    const sql = `SELECT * FROM ${tableName} WHERE CA_PERSONA_ID = '${ID}'`;
     const [[result], _] = await db.execute(sql);
 
     return result;
@@ -27,7 +28,7 @@ class Persona {
 
   async newId() {
     const sql = `SELECT CA_PERSONA_ID AS id
-    FROM gdxem63mnchn3886.CA_PERSONA_T`;
+    FROM ${tableName}`;
 
     const [ids, _] = await db.execute(sql);
 
@@ -40,22 +41,16 @@ class Persona {
 
   async add() {
     const id = await this.newId();
-    const date = new Date();
-    const creationDate = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join("-");
     const fullName = this.patronym ? [this.firstName, this.patronym, this.lastName].join(" ") : [this.firstName, this.lastName].join(" ");
     const engFirstName = transliteration(this.firstName);
     const engLastName = transliteration(this.lastName);
-    if (this.patronym) {
-      this.sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
-        (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_PATRONYM, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
-        VALUES('${id}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${this.patronym}', '${fullName}', '${engFirstName}', '${engLastName}')`;
-    } else {
-      this.sql = `INSERT INTO gdxem63mnchn3886.CA_PERSONA_T
-        (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
-        VALUES('${id}', '${this.creator}', '${creationDate}', '${this.creator}', '${creationDate}', '${this.firstName}', '${this.lastName}', '${fullName}', '${engFirstName}', '${engLastName}')`;
-    }
+    const patronym = this.patronym ? JSON.stringify(this.patronym) : null;
 
-    await db.execute(this.sql);
+    const sql = `INSERT INTO ${tableName}
+        (CA_PERSONA_ID, CA_CREATOR, CA_DATE_CREATION, CA_MODIFIER, CA_DATE_MODI, CA_FIRST_NAME, CA_LAST_NAME, CA_PATRONYM, CA_FULL_NAME, CA_FIRST_NAME_ENG, CA_LAST_NAME_ENG)
+        VALUES('${id}', '${this.creator}', CURRENT_DATE(), '${this.creator}', CURRENT_DATE(), '${this.firstName}', '${this.lastName}', ${patronym}, '${fullName}', '${engFirstName}', '${engLastName}')`;
+
+    await db.execute(sql);
     return id;
   }
 }

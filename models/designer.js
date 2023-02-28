@@ -1,5 +1,7 @@
 const db = require("../config/db");
 
+const { designerTableName: tableName } = require("./sqlTableNames");
+
 class Designer {
   constructor({ personaId, orgStructure, creatorId }) {
     this.personaId = personaId;
@@ -13,7 +15,7 @@ class Designer {
     DD_DESIGNER_NAME AS "designerName",
     DD_AGENT_BONUS AS "designerBonus",
     DD_NOTE AS "designerNote"
-    FROM gdxem63mnchn3886.DD_DESIGNER_T`;
+    FROM ${tableName}`;
 
     const [result, _] = await db.execute(sql);
 

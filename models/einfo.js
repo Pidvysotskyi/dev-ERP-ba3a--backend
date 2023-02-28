@@ -1,6 +1,8 @@
 const db = require("../config/db");
 const { splitProjectKey } = require("../modifiers");
 
+const { einfoTableName: tableName } = require("./sqlTableNames");
+
 class Einfo {
   constructor({ projectKey, orgStructureId, userId, einfoNote, docsArray, dateFrom }) {
     this.user = userId;
@@ -17,13 +19,13 @@ class Einfo {
                 LE_NAME_NOTE as 'einfoNote',
                 LE_DATE_FROM as 'dateFrom',
                 LE_PATH_E_INFO as 'docsArray'
-                FROM gdxem63mnchn3886.LE_E_INFO_T`,
+                FROM ${tableName}`,
     selectArray: `SELECT
                 LE_E_INFO_ID as 'einfoId',
                 LE_NAME_NOTE as 'einfoNote',
                 LE_DATE_FROM as 'dateFrom',
                 LE_PATH_E_INFO as 'docsArray'
-                FROM gdxem63mnchn3886.LE_E_INFO_T`,
+                FROM ${tableName}`,
   };
 
   static async getSpecificArray(sqlCondition) {
@@ -53,20 +55,10 @@ class Einfo {
     return result;
   }
 
-  // static async delete(key) {
-  //   const { kpIn, projectIn, client } = this.splitKey(key);
-  //   const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
-  //   WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
-
-  //   const [result, _] = await db.execute(sql);
-
-  //   return result;
-  // }
-
   async add() {
     const { projectIn, client } = splitProjectKey(this.project);
 
-    const sql = `INSERT INTO gdxem63mnchn3886.LE_E_INFO_T 
+    const sql = `INSERT INTO ${tableName} 
     (FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, LE_NAME_NOTE, DA_EMPLOYEE_ID, LE_DATE_CREATION, LE_MODIFIER, LE_DATE_MODI, LE_PATH_E_INFO, LE_DATE_FROM) 
     VALUES 
     ('${projectIn}', '${this.orgStructure}', '${client}', '${this.note}', '${this.user}', CURRENT_DATE(), '${this.user}', CURRENT_DATE(), '${this.docsArray}', '${this.dateFrom}')`;
@@ -75,7 +67,8 @@ class Einfo {
   }
 
   async update(id) {
-    const sql = `UPDATE gdxem63mnchn3886.LE_E_INFO_T SET 
+    const sql = `UPDATE ${tableName}
+    SET 
     LE_NAME_NOTE = '${this.note}', 
     LE_MODIFIER = '${this.user}', 
     LE_DATE_MODI = CURRENT_DATE(),

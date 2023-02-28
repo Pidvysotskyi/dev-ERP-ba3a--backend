@@ -1,6 +1,8 @@
 const db = require("../config/db");
 const { splitKpKey, splitProjectKey } = require("../modifiers");
 
+const { annexTableName: tableName } = require("./sqlTableNames");
+
 class Annex {
   constructor({ kpKey, userId, annexNumber, annexNote, docsArray, budget }) {
     this.user = userId;
@@ -18,14 +20,14 @@ class Annex {
                 LB_NOTE as 'annexNote',
                 LB_APP_KP_AMOUNT as 'budget',
                 LB_PATH_APP_KP as 'docsArray'
-                FROM gdxem63mnchn3886.LB_APP_KP_T`,
+                FROM ${tableName}`,
     selectArray: `SELECT
                 LB_APP_KP_ID as 'annexId',
                 LB_NAME_APP_KP as 'annexNumber',
                 LB_NOTE as 'annexNote',
                 LB_APP_KP_AMOUNT as 'budget',
                 LB_PATH_APP_KP as 'docsArray'
-                FROM gdxem63mnchn3886.LB_APP_KP_T`,
+                FROM ${tableName}`,
   };
 
   static async getSpecificArray(sqlCondition) {
@@ -60,7 +62,7 @@ class Annex {
 
     const note = this.note ? JSON.stringify(this.note) : null;
 
-    const sql = `INSERT INTO gdxem63mnchn3886.LB_APP_KP_T
+    const sql = `INSERT INTO ${tableName}
                 (FA_PROJECT_IN, GA_KP_IN, DC_CLIENT_IN, LB_NAME_APP_KP, LB_NOTE, DA_EMPLOYEE_ID, LB_DATE_CREATION, LB_MODIFIER, LB_DATE_MODI, LB_PATH_APP_KP, LB_APP_KP_AMOUNT) 
                 VALUES 
                 ('${projectIn}', '${kpIn}', '${client}', '${this.annextName}', ${note}, '${this.user}', CURRENT_DATE(), '${this.user}', CURRENT_DATE(), '${this.docsArray}', '${this.budget}');`;
@@ -71,7 +73,7 @@ class Annex {
   async update(id) {
     const note = this.note ? JSON.stringify(this.note) : null;
 
-    const sql = `UPDATE gdxem63mnchn3886.LB_APP_KP_T
+    const sql = `UPDATE ${tableName}
                 SET
                 LB_NAME_APP_KP = '${this.annextName}',
                 LB_NOTE = ${note},
