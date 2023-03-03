@@ -4,6 +4,7 @@ const deleteKp = require("./deleteKp");
 const addKp = require("./addKp");
 const uppdateKp = require("./updateKp");
 const updateNote = require("./updateNote");
+const getforUser = require("./getForUser");
 
 module.exports = {
   getKp,
@@ -12,4 +13,5 @@ module.exports = {
   addKp,
   uppdateKp,
   updateNote,
+  getforUser,
 };

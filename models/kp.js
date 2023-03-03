@@ -85,6 +85,12 @@ class Kp {
     return result;
   }
 
+  static async getForUser(userId) {
+    const sqlCondition = `WHERE kp.DA_EMPLOYEE_ID = '${userId}'`;
+    const result = await this.getSpecificArray(sqlCondition);
+    return result;
+  }
+
   static async getByKey(key) {
     const { kpIn, projectIn, client } = splitKpKey(key);
 

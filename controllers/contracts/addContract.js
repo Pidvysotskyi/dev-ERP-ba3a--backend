@@ -7,6 +7,11 @@ const addContract = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
   const { projectKey, contractNumber, contractNote, contractDeadline, budget } = req.body;
 
+  if (contractDeadline) {
+    const modifiedProject = new Project({ userId, contractDeadline });
+    await modifiedProject.updateFinDate(projectKey);
+  }
+
   const { orgStructureId } = await Project.getByKey(projectKey);
 
   const contracts = [];

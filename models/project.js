@@ -12,14 +12,14 @@ const getPesonalCondition = projectKey => {
 };
 
 class Project {
-  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, finalDate, status }) {
+  constructor({ clientId, userId, orgStructureId, designerId, designNumber, projectAdress, contractDeadline, status }) {
     this.client = clientId;
     this.user = userId;
     this.orgStructureId = orgStructureId;
     this.designer = designerId;
     this.designNumber = designNumber;
     this.projectAdress = projectAdress;
-    this.finalDate = finalDate;
+    this.finalDate = contractDeadline;
     this.status = status;
   }
 
@@ -145,6 +145,16 @@ VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURR
     DD_DESIGNER_ID = '${this.designer}',
     FA_DESIGN_NUM_IN = '${this.designNumber}', 
     FA_PROJECT_ADRESS = '${this.projectAdress}',
+    FA_DATE_MODI = CURRENT_DATE(),
+    FA_MODIFIER = '${this.user}'
+    ${personalCondition}`;
+    await db.execute(sql);
+  }
+  async updateFinDate(projectKey) {
+    const personalCondition = getPesonalCondition(projectKey);
+
+    const sql = `UPDATE ${tableName}
+    SET 
     FA_DATE_FIN = '${this.finalDate}',
     FA_DATE_MODI = CURRENT_DATE(),
     FA_MODIFIER = '${this.user}'

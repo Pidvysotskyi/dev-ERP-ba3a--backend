@@ -1,4 +1,4 @@
-const { Contract } = require("../../models");
+const { Contract, Project } = require("../../models");
 const path = require("path");
 const fs = require("fs/promises");
 const contractsDir = path.join(__dirname, "../", "../", "storage", "contracts");
@@ -7,7 +7,12 @@ const editContract = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
   const { contractId, contractNumber, contractNote, contractDeadline, budget } = req.body;
 
-  const { docsArray: contracts } = await Contract.getByid(contractId);
+  const { docsArray: contracts, project: projectKey } = await Contract.getByid(contractId);
+
+  if (contractDeadline) {
+    const modifiedProject = new Project({ userId, contractDeadline });
+    await modifiedProject.updateFinDate(projectKey);
+  }
 
   if (req.files) {
     const contractUrls = await Promise.all(
