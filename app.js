@@ -17,6 +17,8 @@ const {
   annexesRouter,
   einfoRouter,
   todoRouter,
+  kpaRouter,
+  kpfRouter,
 } = require("./routes/api/");
 
 const app = express();
@@ -37,6 +39,8 @@ app.use("/projects", projectsRouter);
 app.use("/designer", designerRouter);
 app.use("/position", positionRouter);
 app.use("/kp", kpRouter);
+app.use("/kp/a", kpaRouter);
+app.use("/kp/f", kpfRouter);
 app.use("/contracts", contractsRouter);
 app.use("/annexes", annexesRouter);
 app.use("/einfo", einfoRouter);

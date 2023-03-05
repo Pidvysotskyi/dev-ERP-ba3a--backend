@@ -11,6 +11,8 @@ const contractsRouter = require("./contracts");
 const annexesRouter = require("./annexes");
 const einfoRouter = require("./einfo");
 const todoRouter = require("./todo");
+const kpaRouter = require("./kpa");
+const kpfRouter = require("./kpf");
 
 module.exports = {
   authRouter,
@@ -26,4 +28,6 @@ module.exports = {
   annexesRouter,
   einfoRouter,
   todoRouter,
+  kpaRouter,
+  kpfRouter,
 };

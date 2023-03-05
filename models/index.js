@@ -10,6 +10,8 @@ const Contract = require("./contract");
 const Annex = require("./annex");
 const Einfo = require("./einfo");
 const Todo = require("./todo");
+const Kpa = require("./kpa");
+const Kpf = require("./kpf");
 
 module.exports = {
   Client,
@@ -24,4 +26,6 @@ module.exports = {
   Annex,
   Einfo,
   Todo,
+  Kpa,
+  Kpf,
 };

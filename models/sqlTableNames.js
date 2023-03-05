@@ -11,6 +11,8 @@ const positionTableName = `${schemaName}.EE_EMPLOYEE_TYPE_T`;
 const projectTableName = `${schemaName}.FA_PROJECT_T`;
 const todoTableName = `${schemaName}.FB_TO_DO_PROJECT_T`;
 const userTableName = `${schemaName}.DA_EMPLOYEE_T`;
+const kpaTableName = `${schemaName}.GB_KP_A_T`;
+const kpfTableName = `${schemaName}.GC_KP_F_T`;
 
 module.exports = {
   annexTableName,
@@ -25,4 +27,6 @@ module.exports = {
   projectTableName,
   todoTableName,
   userTableName,
+  kpaTableName,
+  kpfTableName,
 };
