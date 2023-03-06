@@ -53,16 +53,6 @@ class Todo {
     return result;
   }
 
-  // static async delete(key) {
-  //   const { kpIn, projectIn, client } = splitProjectKey(key);
-  //   const sql = `DELETE FROM gdxem63mnchn3886.GA_KP_T
-  //   WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
-
-  //   const [result, _] = await db.execute(sql);
-
-  //   return result;
-  // }
-
   async add() {
     const { projectIn, client } = splitProjectKey(this.project);
 

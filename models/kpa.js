@@ -68,7 +68,6 @@ class Kpa {
 
   static async getByKey(key) {
     const { kpIn, projectIn, client, kpxIn } = splitKpxKey(key);
-    console.log(kpIn, projectIn, client, kpxIn);
 
     const { selectKp } = this.baseQueries;
 
@@ -84,11 +83,12 @@ class Kpa {
   async add() {
     const id = await this.newId();
     const { kpIn, projectIn, client } = splitKpKey(this.kp);
+    const note = this.note ? JSON.stringify(this.note) : null;
 
     const sql = `INSERT INTO ${tableName} 
     (GB_KP_A_IN, GA_KP_IN, FA_PROJECT_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GB_DATE_CREATION, GB_DATE_MODI, GB_MODIFIER, GB_NOTE_KP_A)
     VALUES
-    ('${id}', '${kpIn}', '${projectIn}', '${client}', '${this.modifier}', CURRENT_DATE(), CURRENT_DATE(), '${this.modifier}', '${this.note}')`;
+    ('${id}', '${kpIn}', '${projectIn}', '${client}', '${this.modifier}', CURRENT_DATE(), CURRENT_DATE(), '${this.modifier}', ${note})`;
     await db.execute(sql);
     return [kpIn, projectIn, client, `a${id}`].join("-");
   }
@@ -100,8 +100,8 @@ class Kpa {
     SET
     GB_DATE_MODI = CURRENT_DATE(),
     GB_MODIFIER = '${this.modifier}',
-    GB_NOTE_KP_A = '${this.note}' 
-    WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') AND (GB_KP_A_IN = '${kpxIn})'`;
+    GB_NOTE_KP_A = '${this.note}'
+    WHERE (GA_KP_IN = '${kpIn}') AND (FA_PROJECT_IN = '${projectIn}') AND (DC_CLIENT_IN = '${client}') AND (GB_KP_A_IN = '${kpxIn}')`;
     await db.execute(sql);
   }
 

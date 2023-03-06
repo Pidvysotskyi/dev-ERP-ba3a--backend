@@ -6,6 +6,7 @@ const uppdateKp = require("./updateKp");
 const updateNote = require("./updateNote");
 const getforUser = require("./getForUser");
 const getForCurrent = require("./getForCurrent");
+const getSubKp = require("./getSubKp");
 
 module.exports = {
   getKp,
@@ -16,4 +17,5 @@ module.exports = {
   updateNote,
   getforUser,
   getForCurrent,
+  getSubKp,
 };

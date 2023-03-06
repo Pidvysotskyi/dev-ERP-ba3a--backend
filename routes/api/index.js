@@ -13,6 +13,7 @@ const einfoRouter = require("./einfo");
 const todoRouter = require("./todo");
 const kpaRouter = require("./kpa");
 const kpfRouter = require("./kpf");
+const todoKpRouter = require("./todoKp");
 
 module.exports = {
   authRouter,
@@ -30,4 +31,5 @@ module.exports = {
   todoRouter,
   kpaRouter,
   kpfRouter,
+  todoKpRouter,
 };

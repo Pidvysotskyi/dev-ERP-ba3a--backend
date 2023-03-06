@@ -12,6 +12,7 @@ const Einfo = require("./einfo");
 const Todo = require("./todo");
 const Kpa = require("./kpa");
 const Kpf = require("./kpf");
+const TodoKp = require("./todoKp");
 
 module.exports = {
   Client,
@@ -28,4 +29,5 @@ module.exports = {
   Todo,
   Kpa,
   Kpf,
+  TodoKp,
 };

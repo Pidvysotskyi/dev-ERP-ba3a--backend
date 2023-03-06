@@ -12,7 +12,7 @@ class Kpf {
 
   static baseQueries = {
     selectKp: `SELECT
-    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpaKey,
+    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpfKey,
     kpf.GC_NOTE_KP_F AS "kpfNote",
     kp.GA_DATE_START AS "startDate",
     kp.GA_DATE_FIN AS "finalDate"
@@ -20,7 +20,7 @@ class Kpf {
     LEFT JOIN ${kpTableName} kp
     ON kpf.GA_KP_IN = kp.GA_KP_IN AND kpf.FA_PROJECT_IN = kp.FA_PROJECT_IN AND kpf.DC_CLIENT_IN = kp.DC_CLIENT_IN`,
     selectArray: `SELECT
-    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpaKey,
+    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpfKey,
     kpf.GC_NOTE_KP_F AS "kpfNote",
     kp.GA_DATE_START AS "startDate",
     kp.GA_DATE_FIN AS "finalDate"
@@ -83,11 +83,12 @@ class Kpf {
   async add() {
     const id = await this.newId();
     const { kpIn, projectIn, client } = splitKpKey(this.kp);
+    const note = this.note ? JSON.stringify(this.note) : null;
 
     const sql = `INSERT INTO ${tableName} 
     (GC_KP_F_IN, GA_KP_IN, FA_PROJECT_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GC_DATE_CREATION, GC_DATE_MODI, GC_MODIFIER, GC_NOTE_KP_F)
     VALUES
-    ('${id}', '${kpIn}', '${projectIn}', '${client}', '${this.modifier}', CURRENT_DATE(), CURRENT_DATE(), '${this.modifier}', '${this.note}')`;
+    ('${id}', '${kpIn}', '${projectIn}', '${client}', '${this.modifier}', CURRENT_DATE(), CURRENT_DATE(), '${this.modifier}', ${note})`;
     await db.execute(sql);
     return [kpIn, projectIn, client, `f${id}`].join("-");
   }
@@ -100,7 +101,7 @@ class Kpf {
     GC_DATE_MODI = CURRENT_DATE(),
     GC_MODIFIER = '${this.modifier}',
     GC_NOTE_KP_F = '${this.note}' 
-    WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') AND (GC_KP_F_IN = '${kpxIn})'`;
+    WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') AND (GC_KP_F_IN = '${kpxIn}')`;
     await db.execute(sql);
   }
 

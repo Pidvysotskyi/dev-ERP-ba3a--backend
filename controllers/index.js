@@ -13,6 +13,7 @@ const einfo = require("./einfo");
 const todo = require("./todo");
 const kpa = require("./kpa");
 const kpf = require("./kpf");
+const todoKp = require("./todoKp");
 
 module.exports = {
   auth,
@@ -30,4 +31,5 @@ module.exports = {
   todo,
   kpa,
   kpf,
+  todoKp,
 };

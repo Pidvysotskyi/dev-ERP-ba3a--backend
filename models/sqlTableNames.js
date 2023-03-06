@@ -13,6 +13,7 @@ const todoTableName = `${schemaName}.FB_TO_DO_PROJECT_T`;
 const userTableName = `${schemaName}.DA_EMPLOYEE_T`;
 const kpaTableName = `${schemaName}.GB_KP_A_T`;
 const kpfTableName = `${schemaName}.GC_KP_F_T`;
+const todoKpTableName = `${schemaName}.GR_TO_DO_KP_T`;
 
 module.exports = {
   annexTableName,
@@ -29,4 +30,5 @@ module.exports = {
   userTableName,
   kpaTableName,
   kpfTableName,
+  todoKpTableName,
 };
