@@ -109,10 +109,14 @@ class Kp {
     const id = await this.newId();
     const { projectIn, client } = splitProjectKey(this.project);
 
+    const designer = this.designer ? JSON.stringify(this.designer) : null;
+    const designerBonus = this.designerBonus ? JSON.stringify(this.designerBonus) : null;
+    const kpNote = this.kpNote ? JSON.stringify(this.kpNote) : null;
+
     const sql = `INSERT INTO ${tableName} 
     (GA_KP_IN, FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, GA_DATE_START, GA_DATE_CREATION, GA_DATE_FIN, GA_DATE_MODI, DD_DESIGNER_ID, GA_AGENT_BONUS, GA_NOTE_KP, GA_MODIFIER)
     VALUES
-    ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', CURRENT_DATE(), '${this.finalDate}', CURRENT_DATE(), '${this.designer}', '${this.designerBonus}', '${this.kpNote}', '${this.modifier}');`;
+    ('${id}', '${projectIn}', '${this.orgStructureId}', '${client}', '${this.managerKp}', '${this.startDate}', CURRENT_DATE(), '${this.finalDate}', CURRENT_DATE(), ${designer}, ${designerBonus}, ${kpNote}, '${this.modifier}');`;
     await db.execute(sql);
     return [id, this.project].join("-");
   }
@@ -131,16 +135,20 @@ class Kp {
   async update(key) {
     const { kpIn, projectIn, client } = splitKpKey(key);
 
+    const designer = this.designer ? JSON.stringify(this.designer) : null;
+    const designerBonus = this.designerBonus ? JSON.stringify(this.designerBonus) : null;
+    const kpNote = this.kpNote ? JSON.stringify(this.kpNote) : null;
+
     const sql = `UPDATE ${tableName}
     SET GA_DATE_MODI = CURRENT_DATE(),
     EA_ORG_STRUCTURE_IN = '${this.orgStructureId}',
     DA_EMPLOYEE_ID = '${this.managerKp}',
-    DD_DESIGNER_ID = '${this.designer}',
-    GA_AGENT_BONUS = '${this.designerBonus}',
+    DD_DESIGNER_ID = ${designer},
+    GA_AGENT_BONUS = ${designerBonus},
     GA_DATE_START = '${this.startDate}',
     GA_DATE_FIN = '${this.finalDate}',
     GA_MODIFIER = '${this.modifier}',
-    GA_NOTE_KP = '${this.kpNote}'
+    GA_NOTE_KP = ${kpNote}
     WHERE (GA_KP_IN = '${kpIn}') and (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}')`;
     await db.execute(sql);
   }
