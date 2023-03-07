@@ -3,7 +3,7 @@ const { Conflict } = require("http-errors");
 
 const addKpa = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
-  const { kpKey, kpaNote } = req.body;
+  const { kpKey, subKpNote } = req.body;
 
   const kp = await Kp.getByKey(kpKey);
 
@@ -13,7 +13,7 @@ const addKpa = async (req, res, next) => {
 
   const kpaInfo = {
     kpKey,
-    kpaNote,
+    subKpNote,
     userId,
   };
 

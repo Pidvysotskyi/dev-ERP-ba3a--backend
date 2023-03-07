@@ -4,24 +4,24 @@ const { splitKpKey, splitKpxKey } = require("../modifiers");
 const { kpfTableName: tableName, kpTableName } = require("./sqlTableNames");
 
 class Kpf {
-  constructor({ kpKey, userId, kpfNote }) {
+  constructor({ kpKey, userId, subKpNote }) {
     this.kp = kpKey;
     this.modifier = userId;
-    this.note = kpfNote;
+    this.note = subKpNote;
   }
 
   static baseQueries = {
     selectKp: `SELECT
-    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpfKey,
-    kpf.GC_NOTE_KP_F AS "kpfNote",
+    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as subKpKey,
+    kpf.GC_NOTE_KP_F AS "subKpNote",
     kp.GA_DATE_START AS "startDate",
     kp.GA_DATE_FIN AS "finalDate"
     FROM ${tableName} kpf
     LEFT JOIN ${kpTableName} kp
     ON kpf.GA_KP_IN = kp.GA_KP_IN AND kpf.FA_PROJECT_IN = kp.FA_PROJECT_IN AND kpf.DC_CLIENT_IN = kp.DC_CLIENT_IN`,
     selectArray: `SELECT
-    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as kpfKey,
-    kpf.GC_NOTE_KP_F AS "kpfNote",
+    CONCAT(kpf.GA_KP_IN, "-", kpf.FA_PROJECT_IN, "-", kpf.DC_CLIENT_IN, "-", "f", kpf.GC_KP_F_IN) as subKpKey,
+    kpf.GC_NOTE_KP_F AS "subKpNote",
     kp.GA_DATE_START AS "startDate",
     kp.GA_DATE_FIN AS "finalDate"
     FROM ${tableName} kpf

@@ -4,27 +4,27 @@ const { Conflict } = require("http-errors");
 const updateNote = async (req, res, next) => {
   const { DA_EMPLOYEE_ID: userId } = req.user;
 
-  const { kpfKey, kpfNote } = req.body;
+  const { subKpKey, subKpNote } = req.body;
 
-  const kpf = await Kpf.getByKey(kpfKey);
+  const kpf = await Kpf.getByKey(subKpKey);
 
   if (!kpf) {
-    throw new Conflict(`Cannot find the Kpa ${kpfKey}`);
+    throw new Conflict(`Cannot find the Kpa ${subKpKey}`);
   }
 
   const kpfParams = {
-    kpfNote,
+    subKpNote,
     userId,
   };
 
   const newKpf = new Kpf(kpfParams);
 
-  await newKpf.updateNote(kpfKey);
+  await newKpf.updateNote(subKpKey);
 
-  const updatedKpf = await Kpf.getByKey(kpfKey);
+  const updatedKpf = await Kpf.getByKey(subKpKey);
 
   res.status(201).json({
-    message: `Kpf ${kpfKey} Updated`,
+    message: `Kpf ${subKpKey} Updated`,
     kp: updatedKpf,
   });
 };
