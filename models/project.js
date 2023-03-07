@@ -119,9 +119,14 @@ class Project {
 
   async add() {
     const id = await this.newId();
+
+    const designer = this.designer ? JSON.stringify(this.designer) : null;
+    const projectAdress = this.projectAdress ? JSON.stringify(this.projectAdress) : null;
+    const designNumber = this.designNumber ? JSON.stringify(this.designNumber) : null;
+
     const sql = `INSERT INTO ${tableName}
-(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DATE_FIN, FA_DESIGN_NUM_IN, FA_PROJECT_STATUS)
-VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURRENT_DATE(), CURRENT_DATE(), '${this.user}', '${this.designer}', '${this.projectAdress}', '${this.finalDate}', '${this.designNumber}', '${this.status}')`;
+(FA_PROJECT_IN, EA_ORG_STRUCTURE_IN, DC_CLIENT_IN, DA_EMPLOYEE_ID, FA_DATE_CREATION, FA_DATE_MODI, FA_MODIFIER, DD_DESIGNER_ID, FA_PROJECT_ADRESS, FA_DESIGN_NUM_IN, FA_PROJECT_STATUS)
+VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURRENT_DATE(), CURRENT_DATE(), '${this.user}', ${designer}, ${projectAdress}, ${designNumber}, '${this.status}')`;
     await db.execute(sql);
     return [id, this.client].join("-");
   }
@@ -140,11 +145,15 @@ VALUES('${id}', '${this.orgStructureId}', '${this.client}', '${this.user}', CURR
   async update(projectKey) {
     const personalCondition = getPesonalCondition(projectKey);
 
+    const designer = this.designer ? JSON.stringify(this.designer) : null;
+    const projectAdress = this.projectAdress ? JSON.stringify(this.projectAdress) : null;
+    const designNumber = this.designNumber ? JSON.stringify(this.designNumber) : null;
+
     const sql = `UPDATE ${tableName}
     SET 
-    DD_DESIGNER_ID = '${this.designer}',
-    FA_DESIGN_NUM_IN = '${this.designNumber}', 
-    FA_PROJECT_ADRESS = '${this.projectAdress}',
+    DD_DESIGNER_ID = ${designer},
+    FA_DESIGN_NUM_IN = ${designNumber}, 
+    FA_PROJECT_ADRESS = ${projectAdress},
     FA_DATE_MODI = CURRENT_DATE(),
     FA_MODIFIER = '${this.user}'
     ${personalCondition}`;
