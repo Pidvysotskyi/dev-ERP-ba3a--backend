@@ -10,7 +10,7 @@ class Client {
   }
 
   static async getAll() {
-    const sql = `SELECT * FROM ${tableName}`;
+    const sql = `SELECT * FROM ${tableName} ORDER BY DC_DATA_CREATION DESC`;
 
     const [result, _] = await db.execute(sql);
 
