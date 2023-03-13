@@ -30,6 +30,14 @@ class User {
     return result;
   }
 
+  static async getOrgStructure(id) {
+    const sql = `SELECT EA_ORG_STRUCTURE_IN as orgStructure FROM ${tableName} where DA_EMPLOYEE_ID = '${id}'`;
+
+    const [[result], _] = await db.execute(sql);
+
+    return result;
+  }
+
   static async findbyPersona(id) {
     const sql = `SELECT * FROM ${tableName} WHERE CA_PERSONA_ID = '${id}'`;
     const [[result], _] = await db.execute(sql);

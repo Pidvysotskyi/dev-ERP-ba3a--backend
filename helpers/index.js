@@ -1,5 +1,7 @@
-const uploadFile = require("./uploadFile");
+const getNumericCode = require("./getNumericCode");
+const getCheckSum = require("./getCheckSum");
 
 module.exports = {
-  uploadFile,
+  getNumericCode,
+  getCheckSum,
 };
