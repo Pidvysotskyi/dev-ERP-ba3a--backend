@@ -9,7 +9,9 @@ const cdigit = require("cdigit");
 const algo = cdigit.mod97_10;
 
 class OperationalAcc {
-  constructor({ clientKey, countryCode, userId, balanceCode, cityCode, customerCode, currencyCode, accName }) {
+  constructor({ personaId, clientKey, orgStructureId, countryCode, userId, balanceCode, cityCode, customerCode, currencyCode, accName }) {
+    this.orgStructure = orgStructureId;
+    this.persona = personaId;
     this.client = clientKey;
     this.user = userId;
     this.countryCode = countryCode;
@@ -22,11 +24,13 @@ class OperationalAcc {
 
   static baseQueries = {
     selectAcc: `SELECT
-                *
-                FROM ${tableName}`,
+    PY_NAME_BALANCE as accountName,
+    PY_FULL_ACCOPERACTIVITY as accountNumber
+    FROM ${tableName}`,
     selectArray: `SELECT
-                *
-                FROM ${tableName}`,
+    PY_NAME_BALANCE as accountName,
+    PY_FULL_ACCOPERACTIVITY as accountNumber
+    FROM ${tableName}`,
   };
 
   static async getSpecificArray(sqlCondition) {
@@ -36,20 +40,18 @@ class OperationalAcc {
     return kps;
   }
 
-  static async getForProject(key) {
-    const { projectIn, client } = splitProjectKey(key);
-
-    const sqlCondition = `WHERE FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
+  static async getForClient(key) {
+    const sqlCondition = `WHERE CLIENT = '${key}'`;
     const result = await this.getSpecificArray(sqlCondition);
     return result;
   }
 
   static async getByid(id) {
-    const { selectAnnex } = this.baseQueries;
+    const { selectAcc } = this.baseQueries;
 
-    const sqlCondition = `WHERE LB_APP_KP_ID = '${id}'`;
+    const sqlCondition = `WHERE (PY_ACCOUNT_ID = '${id}')`;
 
-    const sql = [selectAnnex, sqlCondition].join(" ");
+    const sql = [selectAcc, sqlCondition].join(" ");
 
     const [[result], _] = await db.execute(sql);
 
@@ -73,26 +75,24 @@ class OperationalAcc {
 
   async add() {
     const accountId = await this.newId();
-    console.log(accountId, "new Id");
 
     const contryCodeNumber = await getNumericCode(this.countryCode);
-    const [org, persona] = this.client.split("-");
 
-    const personaCode = addLeadingZeroes(persona, 6);
+    const personaCode = addLeadingZeroes(this.persona, 6);
 
     const basicNumber = [this.ballanceCode, personaCode, this.cityCode, accountId, this.customerCode, this.currencyCode, contryCodeNumber, "00"].join("");
 
     const checkSum = algo.compute(basicNumber);
-    console.log(checkSum, "generated check sum");
 
-    const { orgStructure } = await User.getOrgStructure(this.user);
+    const client = this.client ? JSON.stringify(this.client) : null;
 
     const sql = `INSERT INTO ${tableName}
     (JA_SHORT_COUNTRY_NAME, PA_BALANCE_SHEET_ACCOUNTS, PA_CHECK_NUMBER, PC_FFFFFF, EA_CITY_CODE, PY_ACCOUNT_ID, PC_CUSTOMER_TYPE_CODE_ID, JC_CURRENCY_ID, DA_EMPLOYEE_ID, PY_DATE_CREATION, PY_DATE_MODI, PY_MODIFIER, CLIENT, PY_OPEN_BALANCE_DEBIT, PY_OPEN_BALANCE_CREDIT, PY_BALANCE_DEBIT, PY_BALANCE_CREDIT, PY_OUT_BALANCE_DEBIT, PY_OUT_BALANCE_CREDIT, PY_NAME_BALANCE, EA_ORG_STRUCTURE_IN, PY_FULL_ACCOPERACTIVITY)
     VALUES
-    ('${this.countryCode}', '${this.ballanceCode}', '${checkSum}', '${personaCode}', '${this.cityCode}', '${accountId}', '${this.customerCode}', '${this.currencyCode}', '${this.user}', '2023-03-13', '2023-03-13', '${this.user}', '${this.client}', '0', '0', '0', '0', '0', '0', '${this.name}', '${orgStructure}',CONCAT(JA_SHORT_COUNTRY_NAME, PA_BALANCE_SHEET_ACCOUNTS, PA_CHECK_NUMBER, PC_FFFFFF, EA_CITY_CODE, PY_ACCOUNT_ID, PC_CUSTOMER_TYPE_CODE_ID, JC_CURRENCY_ID));`;
-    const [result, _] = await db.execute(sql);
-    console.log(result);
+    ('${this.countryCode}', '${this.ballanceCode}', '${checkSum}', '${personaCode}', '${this.cityCode}', '${accountId}', '${this.customerCode}', '${this.currencyCode}', '${this.user}', '2023-03-13', '2023-03-13', '${this.user}', ${client}, '0', '0', '0', '0', '0', '0', '${this.name}', '${this.orgStructure}',CONCAT(JA_SHORT_COUNTRY_NAME, PA_BALANCE_SHEET_ACCOUNTS, PA_CHECK_NUMBER, PC_FFFFFF, EA_CITY_CODE, PY_ACCOUNT_ID, PC_CUSTOMER_TYPE_CODE_ID, JC_CURRENCY_ID));`;
+
+    await db.execute(sql);
+
     return accountId;
   }
 

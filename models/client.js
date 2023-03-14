@@ -3,10 +3,10 @@ const db = require("../config/db");
 const { clientTableName: tableName } = require("./sqlTableNames");
 
 class Client {
-  constructor({ personaId, orgStructure, creatorId }) {
+  constructor({ personaId, orgStructure, userId }) {
     this.personaId = personaId;
     this.orgStructure = orgStructure;
-    this.creator = creatorId;
+    this.creator = userId;
   }
 
   static async getAll() {
