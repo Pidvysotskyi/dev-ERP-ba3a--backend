@@ -4,7 +4,7 @@ const { splitKpKey, splitProjectKey } = require("../modifiers");
 const { kpTableName: tableName, userTableName, projectTableName, designerTableName, orgStructureTableName } = require("./sqlTableNames");
 
 class Kp {
-  constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote, userId }) {
+  constructor({ projectKey, managerKpId, orgStructureId, designerId, designerBonus, startDate, finalDate, kpNote, userId, prepaymentCost, prepaymentDeadline }) {
     this.project = projectKey;
     this.managerKp = managerKpId;
     this.orgStructureId = orgStructureId;
@@ -14,6 +14,8 @@ class Kp {
     this.finalDate = finalDate;
     this.kpNote = kpNote;
     this.modifier = userId;
+    this.prepaymentDeadline = prepaymentDeadline;
+    this.prepaymentCost = prepaymentCost;
   }
 
   static baseQueries = {
@@ -31,7 +33,9 @@ class Kp {
             kp.GA_DATE_START AS "startDate",
             kp.GA_DATE_FIN AS "finalDate",
             kp.EA_ORG_STRUCTURE_IN  AS "orgStructureId",
-            org.EA_FULL_NAME_ORG AS "orgName"
+            org.EA_FULL_NAME_ORG AS "orgName",
+            kp.GA_KP_PRERAYMENT AS "prepaymentCost",
+            kp.GA_DATE_PRERAYMENT_TERM AS "prepaymentDeadline"
             FROM ${tableName} kp
             LEFT JOIN ${userTableName} emp
             ON kp.DA_EMPLOYEE_ID = emp.DA_EMPLOYEE_ID
@@ -77,9 +81,15 @@ class Kp {
     return result;
   }
 
-  static async getSpecificArray(sqlCondition) {
+  static async getSpecificArray(sqlCondition, sqlOrder) {
     const { selectArray } = this.baseQueries;
-    const sql = [selectArray, sqlCondition].join(" ");
+    let sql = "";
+    if (sqlOrder) {
+      sql = [selectArray, sqlCondition, sqlOrder].join(" ");
+    } else {
+      sql = [selectArray, sqlCondition].join(" ");
+    }
+
     const [kps, _] = await db.execute(sql);
     return kps;
   }
@@ -88,13 +98,15 @@ class Kp {
     const { projectIn, client } = splitProjectKey(projectKey);
 
     const sqlCondition = `WHERE kp.FA_PROJECT_IN = '${projectIn}' AND kp.DC_CLIENT_IN = '${client}'`;
-    const result = await this.getSpecificArray(sqlCondition);
+    const sqlOrder = `ORDER BY kp.GA_DATE_FIN`;
+    const result = await this.getSpecificArray(sqlCondition, sqlOrder);
     return result;
   }
 
   static async getForUser(userId) {
     const sqlCondition = `WHERE kp.DA_EMPLOYEE_ID = '${userId}'`;
-    const result = await this.getSpecificArray(sqlCondition);
+    const sqlOrder = `ORDER BY kp.GA_DATE_FIN`;
+    const result = await this.getSpecificArray(sqlCondition, sqlOrder);
     return result;
   }
 
@@ -164,9 +176,21 @@ class Kp {
     const { kpIn, projectIn, client } = splitKpKey(key);
     const sql = `UPDATE ${tableName} 
     SET 
-    GA_DATE_MODI = CURRENT_DATE()', 
-    GA_MODIFIER = '${this.user}'
+    GA_DATE_MODI = CURRENT_DATE(), 
+    GA_MODIFIER = '${this.modifier}'
     GA_KP_STATUS = '${this.status}'
+    WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') and (GA_KP_IN = '${kpIn}')`;
+    await db.execute(sql);
+  }
+
+  async changePrepaiment(key) {
+    const { kpIn, projectIn, client } = splitKpKey(key);
+    const sql = `UPDATE ${tableName} 
+    SET 
+    GA_DATE_MODI = CURRENT_DATE(), 
+    GA_MODIFIER = '${this.modifier}',
+    GA_KP_PRERAYMENT = '${this.prepaymentCost}',
+    GA_DATE_PRERAYMENT_TERM = '${this.prepaymentDeadline}'
     WHERE (FA_PROJECT_IN = '${projectIn}') and (DC_CLIENT_IN = '${client}') and (GA_KP_IN = '${kpIn}')`;
     await db.execute(sql);
   }
