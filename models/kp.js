@@ -21,6 +21,9 @@ class Kp {
             CONCAT(kp.GA_KP_IN, "-", kp.FA_PROJECT_IN, "-", kp.DC_CLIENT_IN) as kpKey,
             kp.DA_EMPLOYEE_ID AS "managerKpId",
             emp.DA_EMPLOYEE_NAME AS "managerKpName",
+            pro.DA_EMPLOYEE_ID AS "projectManagerId",
+            emp2.DA_EMPLOYEE_NAME AS "projectManagerName",
+            CONCAT(pro.FA_PROJECT_IN, "-", pro.DC_CLIENT_IN) AS "projectKey",
             kp.DD_DESIGNER_ID AS "designerId",
             dis.DD_DESIGNER_NAME AS "designerName",
             kp.GA_AGENT_BONUS AS "designerBonus",
@@ -35,7 +38,11 @@ class Kp {
             LEFT JOIN ${designerTableName} dis
             ON kp.DD_DESIGNER_ID = dis.DD_DESIGNER_ID
             LEFT JOIN ${orgStructureTableName} org
-            ON kp.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN`,
+            ON kp.EA_ORG_STRUCTURE_IN = org.EA_ORG_STRUCTURE_IN
+            LEFT JOIN ${projectTableName} pro
+            ON kp.FA_PROJECT_IN = pro.FA_PROJECT_IN AND kp.DC_CLIENT_IN = pro.DC_CLIENT_IN
+            LEFT JOIN ${userTableName} emp2
+            ON pro.DA_EMPLOYEE_ID = emp2.DA_EMPLOYEE_ID`,
     selectArray: `SELECT 
             CONCAT(kp.GA_KP_IN, "-", kp.FA_PROJECT_IN, "-", kp.DC_CLIENT_IN) as kpKey,
             pro.DA_EMPLOYEE_ID AS "projectManagerId",
@@ -96,7 +103,7 @@ class Kp {
 
     const { selectKp } = this.baseQueries;
 
-    const sqlCondition = `WHERE GA_KP_IN = '${kpIn}' AND FA_PROJECT_IN = '${projectIn}' AND DC_CLIENT_IN = '${client}'`;
+    const sqlCondition = `WHERE kp.GA_KP_IN = '${kpIn}' AND kp.FA_PROJECT_IN = '${projectIn}' AND kp.DC_CLIENT_IN = '${client}'`;
 
     const sql = [selectKp, sqlCondition].join(" ");
 
